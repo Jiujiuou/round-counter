@@ -1,0 +1,20 @@
+export const STAGE_WIDTH_RATIO = 0.7 // 三环主体占可视区宽度的比例
+export const OUTER_MARGIN_RATIO = 0.04 // 左右留白各占三环主体宽度的比例
+export const LANE_GAP_RATIO = 0.02 // 时、分、秒展示列之间的间距占三环主体宽度的比例
+export const GROUP_WIDTH_RATIO = 0.7 // 数字、文字间距和刻度线合计占单列宽度的上限比例
+export const FONT_HEIGHT_RATIO = 0.44 // 字号相对视口高度的上限比例
+export const RING_FONT_RATIO = 0.36 // 环上标注字号相对原布局字号的比例
+export const RING_STEP_FONT_RATIO = 0.2 // 相邻单位刻度的目标间距相对原布局字号的比例
+export const MINOR_TICK_WIDTH_RATIO = 0.65 // 小刻度长度相对数字旁主刻度长度的比例
+export const MIN_VERTICAL_RADIUS_HEIGHT_RATIO = 0.55 // 圆环纵向半径相对可视区高度的下限比例
+export const VERTICAL_GAP_FONT_RATIO = 0.06 // 旋转后相邻两组内容的最小垂直净距与字号的比例
+export const SAFETY_WIDTH_RATIO = 0.008 // 整组内容距离展示列边界的安全距离占三环主体宽度的比例
+export const TICK_FONT_RATIO = 0.32 // 数字旁刻度线长度与字号的比例
+export const TEXT_GAP_FONT_RATIO = 0.14 // 数字与刻度线之间的距离与字号的比例
+export const TICK_THICKNESS_FONT_RATIO = 0.015 // 刻度线厚度随字号增长的比例
+export const TICK_MIN_THICKNESS = 2 // 小屏幕上的刻度线最小厚度，单位为像素
+export const TICK_MAX_THICKNESS = 4 // 大屏幕上的刻度线最大厚度，单位为像素
+export const ELLIPSE_THRESHOLD = 1.5 // 圆形所需避让半径超过目标半径多少倍时改用椭圆
+
+export const RING_COUNTS = { hour: 24, minute: 60, second: 60 } // 时、分、秒各环的刻度数量
+export const RING_LABEL_INTERVALS = { hour: 1, minute: 5, second: 5 } // 各环每隔多少个单位显示一次数字

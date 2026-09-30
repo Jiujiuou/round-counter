@@ -1,0 +1,48 @@
+.root {
+  position: absolute;
+  top: 50%;
+  left: calc(50% - var(--group-shift));
+  width: 0;
+  height: 0;
+
+  .marker {
+    position: absolute;
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    transform-origin: 0 0;
+    will-change: transform;
+
+    .number {
+      position: absolute;
+      top: 0;
+      left: 0;
+      color: var(--clock-fg);
+      font-size: var(--font-size);
+      font-weight: 400;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      white-space: nowrap;
+      transform: translate(-50%, -50%);
+    }
+
+    .tick {
+      position: absolute;
+      top: 0;
+      left: calc(var(--number-offset) - var(--tick-width));
+      width: var(--tick-width);
+      height: var(--tick-thickness);
+      border-radius: var(--tick-thickness);
+      background-color: var(--clock-tick);
+      transform: translateY(-50%);
+    }
+  }
+
+  .minor {
+    .tick {
+      left: calc(var(--number-offset) - var(--minor-tick-width));
+      width: var(--minor-tick-width);
+      opacity: var(--clock-minor-tick-opacity);
+    }
+  }
+}
