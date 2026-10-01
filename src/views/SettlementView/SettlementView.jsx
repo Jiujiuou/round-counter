@@ -91,7 +91,7 @@ export default function SettlementView({ roomId, onBack, onRematch, onShare }) {
                         r.diff > 0 ? styles.up : r.diff < 0 ? styles.down : styles.flat
                       }`}
                     >
-                      {r.diff === 0 ? '平' : `${fmtDiff(r.diff)} ${r.diff > 0 ? '水上' : '水下'}`}
+                      {fmtDiff(r.diff)}
                     </span>
                   </div>
                 </div>

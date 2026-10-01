@@ -58,9 +58,19 @@
 .sectionTitle {
   margin: 0 0 8px 4px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-3);
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionTitle::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }
 
 /* ===== 排名 ===== */
@@ -75,8 +85,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--border);
+}
+
+/* 冠军行金色底纹 */
+.rankRow:first-child {
+  background: var(--gold-soft);
 }
 
 .rankRow:last-child {
@@ -126,9 +141,14 @@
 }
 
 .rankScore {
-  font-size: 15px;
+  font-family: var(--font-serif);
+  font-size: 17px;
   font-weight: 700;
   color: var(--text-1);
+}
+
+.rankRow:first-child .rankScore {
+  color: var(--gold-deep);
 }
 
 .rankDiff {
@@ -194,6 +214,8 @@
 
 .amount {
   margin-left: auto;
+  font-family: var(--font-serif);
+  font-size: 17px;
   font-weight: 700;
   color: var(--text-1);
 }
@@ -207,19 +229,21 @@
 
 .primaryBtn {
   flex: 1;
-  height: 50px;
-  border-radius: var(--radius-l);
+  height: 52px;
+  border-radius: var(--radius-m);
   background: var(--primary);
   color: var(--primary-text);
   font-size: 15px;
   font-weight: 600;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 14px rgb(36 32 26 / 14%);
   transition: opacity 150ms ease;
 }
 
 .rematchBtn {
   flex: 1;
-  height: 50px;
-  border-radius: var(--radius-l);
+  height: 52px;
+  border-radius: var(--radius-m);
   background: var(--surface);
   color: var(--text-1);
   border: 1px solid var(--border-strong);

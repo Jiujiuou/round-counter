@@ -90,8 +90,9 @@ export default function ShareView({ roomId, onBack }) {
             {top3[1] && (
               <div className={`${styles.podiumItem} ${styles.second}`}>
                 <div className={styles.podiumName}>{top3[1].name}</div>
+                <div className={`${styles.podiumScore} num`}>{fmtAmount(top3[1].total)}</div>
                 <div
-                  className={`${styles.podiumScore} ${top3[1].diff >= 0 ? styles.up : styles.down}`}
+                  className={`${styles.podiumDiff} num ${top3[1].diff >= 0 ? styles.up : styles.down}`}
                 >
                   {fmtDiff(top3[1].diff)}
                 </div>
@@ -108,8 +109,9 @@ export default function ShareView({ roomId, onBack }) {
               <div className={`${styles.podiumItem} ${styles.first}`}>
                 <Crown size={18} strokeWidth={2} className={styles.crown} />
                 <div className={styles.podiumName}>{top3[0].name}</div>
+                <div className={`${styles.podiumScore} num`}>{fmtAmount(top3[0].total)}</div>
                 <div
-                  className={`${styles.podiumScore} ${top3[0].diff >= 0 ? styles.up : styles.down}`}
+                  className={`${styles.podiumDiff} num ${top3[0].diff >= 0 ? styles.up : styles.down}`}
                 >
                   {fmtDiff(top3[0].diff)}
                 </div>
@@ -125,8 +127,9 @@ export default function ShareView({ roomId, onBack }) {
             {top3[2] && (
               <div className={`${styles.podiumItem} ${styles.third}`}>
                 <div className={styles.podiumName}>{top3[2].name}</div>
+                <div className={`${styles.podiumScore} num`}>{fmtAmount(top3[2].total)}</div>
                 <div
-                  className={`${styles.podiumScore} ${top3[2].diff >= 0 ? styles.up : styles.down}`}
+                  className={`${styles.podiumDiff} num ${top3[2].diff >= 0 ? styles.up : styles.down}`}
                 >
                   {fmtDiff(top3[2].diff)}
                 </div>

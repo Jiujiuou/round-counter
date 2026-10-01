@@ -1,7 +1,12 @@
 .page {
   min-height: 100%;
-  // 柔和 pastel 渐变背景（参考图：浅青 → 米白）
-  background: linear-gradient(180deg, #d9f0ee 0%, #eef5f0 38%, #f7f2e9 100%);
+  // 同族青色柔和渐变（浅青 → 暖纸），与全局暖底衔接
+  background: linear-gradient(
+    180deg,
+    var(--share-bg-top) 0%,
+    var(--share-bg-mid) 42%,
+    var(--share-bg-bottom) 100%
+  );
   display: flex;
   flex-direction: column;
 }
@@ -25,12 +30,12 @@
 }
 
 .iconBtn {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-2);
+  color: var(--teal-ink);
   border-radius: var(--radius-s);
 }
 
@@ -40,34 +45,46 @@
   overflow-y: auto;
 }
 
-/* ===== 标题区（无卡片，直接在渐变背景上） ===== */
+/* ===== 标题区 ===== */
 .hero {
   padding: 8px 4px 4px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  text-align: center;
 }
 
 .heroTitle {
   margin: 0;
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: #1d3b34;
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--teal-ink);
+}
+
+.heroTitle::after {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 2px;
+  margin: 10px auto 0;
+  background: var(--gold);
+  border-radius: 2px;
 }
 
 .heroSub {
-  margin: 6px 0 0;
-  font-size: 13px;
-  line-height: 1.6;
-  color: rgb(29 59 52 / 62%);
+  margin: 10px 0 0;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgb(21 88 80 / 60%);
 }
 
-/* ===== 3D 圆柱领奖台 ===== */
+/* ===== 领奖台：同族青色三阶 ===== */
 .podium {
   display: flex;
   align-items: flex-end;
   justify-content: center;
   gap: 18px;
-  padding: 24px 8px 0;
+  padding: 20px 8px 0;
   margin-bottom: 20px;
 }
 
@@ -81,17 +98,33 @@
 }
 
 .podiumName {
-  font-size: 13px;
-  font-weight: 600;
-  color: #1d3b34;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--teal-ink);
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+/* 总分：主数字，衬线大字 */
 .podiumScore {
-  font-size: 12px;
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--teal-ink);
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.first .podiumScore {
+  font-size: 32px;
+  color: var(--gold-deep);
+}
+
+/* 水上/水下：小标签 */
+.podiumDiff {
+  font-size: 11px;
   font-weight: 600;
   margin: 2px 0 8px;
 }
@@ -115,7 +148,7 @@
   font-size: 18px;
   font-weight: 700;
   border: 3px solid #fff;
-  box-shadow: 0 4px 12px rgb(29 59 52 / 18%);
+  box-shadow: 0 4px 12px rgb(21 88 80 / 20%);
   margin-bottom: -14px; // 悬浮压在柱顶
   position: relative;
   z-index: 2;
@@ -125,10 +158,11 @@
   width: 62px;
   height: 62px;
   font-size: 22px;
+  border-color: rgb(176 138 62 / 45%);
 }
 
 .crown {
-  color: #e8b64c;
+  color: var(--gold);
   margin-bottom: 2px;
 }
 
@@ -141,13 +175,11 @@
   justify-content: center;
   font-size: 34px;
   font-weight: 800;
-  color: rgb(255 255 255 / 92%);
   position: relative;
   overflow: hidden;
-  box-shadow: inset 0 -14px 24px rgb(0 0 0 / 8%);
+  box-shadow: inset 0 -14px 24px rgb(21 88 80 / 10%);
 }
 
-/* 柱顶高光椭圆 */
 .podiumBase::before {
   content: '';
   position: absolute;
@@ -156,30 +188,32 @@
   right: 0;
   height: 22px;
   border-radius: 50%;
-  background: rgb(255 255 255 / 35%);
+  background: rgb(255 255 255 / 32%);
 }
 
 .first .podiumBase {
   height: 128px;
-  background: linear-gradient(180deg, #7fd8e8 0%, #54b8d8 100%);
+  background: linear-gradient(180deg, var(--teal-mid) 0%, var(--teal-deep) 100%);
   color: #fff;
 }
 
 .second .podiumBase {
   height: 96px;
-  background: linear-gradient(180deg, #f7b8d4 0%, #ee93bd 100%);
+  background: linear-gradient(180deg, var(--teal-pale) 0%, var(--teal-mid) 100%);
+  color: rgb(21 88 80 / 85%);
 }
 
 .third .podiumBase {
   height: 80px;
-  background: linear-gradient(180deg, #9adfd3 0%, #6ecabb 100%);
+  background: linear-gradient(180deg, #e3f1ee 0%, var(--teal-pale) 100%);
+  color: rgb(21 88 80 / 70%);
 }
 
-/* ===== 白色圆角列表卡 ===== */
+/* ===== 白色圆角卡片 ===== */
 .card {
   background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 28px rgb(29 59 52 / 8%);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-pop);
   overflow: hidden;
   margin-bottom: 16px;
 }
@@ -189,7 +223,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 14px 18px;
-  border-bottom: 1px solid #f0ede6;
+  border-bottom: 1px solid var(--border);
 }
 
 .rankRow:last-child {
@@ -206,9 +240,10 @@
 .rankNo {
   width: 20px;
   text-align: center;
+  font-family: var(--font-serif);
   font-size: 15px;
   font-weight: 700;
-  color: #b9b2a4;
+  color: var(--text-3);
 }
 
 .rankAvatar {
@@ -241,8 +276,9 @@
 }
 
 .rankScore {
+  font-family: var(--font-serif);
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-1);
 }
 
@@ -254,8 +290,8 @@
 /* ===== 对局回顾 ===== */
 .roundCard {
   background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 28px rgb(29 59 52 / 8%);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-pop);
   padding: 16px 18px;
   margin-bottom: 16px;
   position: relative;
@@ -265,8 +301,8 @@
   margin: 0 0 10px;
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 1px;
-  color: #b9b2a4;
+  letter-spacing: 2px;
+  color: var(--text-3);
 }
 
 .roundWrap {
@@ -299,7 +335,7 @@
   padding: 8px 10px;
   text-align: center;
   color: var(--text-1);
-  border-bottom: 1px solid #f0ede6;
+  border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
 
@@ -324,7 +360,7 @@
   right: 0;
   height: 52px;
   background: linear-gradient(to bottom, transparent, #fff);
-  border-radius: 0 0 20px 20px;
+  border-radius: 0 0 var(--radius-l) var(--radius-l);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -341,7 +377,11 @@
 .footerHint {
   text-align: center;
   padding: 8px 0;
-  color: rgb(29 59 52 / 50%);
+  color: rgb(21 88 80 / 50%);
   font-size: 12px;
   letter-spacing: 1px;
+}
+
+.footerHint p {
+  margin: 0;
 }

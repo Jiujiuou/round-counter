@@ -302,18 +302,15 @@ export default function RoomView({ roomId, onBack, onFinish }) {
 
       {!isFinished && (
         <div className={styles.bottomBar}>
-          <button className={styles.actionBtn} onClick={openRoundSheet}>
-            <Plus size={18} strokeWidth={2} />
+          <button className={styles.roundBtn} onClick={openRoundSheet}>
+            <Plus size={18} strokeWidth={2.2} />
             <span>新一轮</span>
           </button>
-          <button className={styles.actionBtn} onClick={() => setAddPlayerSheet(true)}>
-            <Plus size={18} strokeWidth={2} />
+          <button className={styles.playerBtn} onClick={() => setAddPlayerSheet(true)}>
+            <Plus size={16} strokeWidth={2.2} />
             <span>玩家</span>
           </button>
-          <button
-            className={`${styles.actionBtn} ${styles.dangerBtn}`}
-            onClick={() => setEndOpen(true)}
-          >
+          <button className={styles.endBtn} onClick={() => setEndOpen(true)}>
             <span>结束</span>
           </button>
         </div>

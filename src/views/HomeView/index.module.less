@@ -2,25 +2,40 @@
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  padding: calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
+  padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
 }
 
 .header {
-  margin-bottom: 28px;
+  margin-bottom: 24px;
+  padding-top: 8px;
 }
 
 .appName {
   margin: 0;
   font-family: var(--font-serif);
-  font-size: 34px;
+  font-size: 36px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 6px;
   color: var(--text-1);
+  position: relative;
+  display: inline-block;
+}
+
+/* 标题下的金色短划 */
+.appName::after {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 3px;
+  margin-top: 10px;
+  background: var(--gold);
+  border-radius: 2px;
 }
 
 .slogan {
-  margin: 6px 0 0;
-  font-size: 14px;
+  margin: 14px 0 0;
+  font-size: 13px;
+  letter-spacing: 1px;
   color: var(--text-3);
 }
 
@@ -28,35 +43,53 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
+.main:has(.list) {
+  justify-content: flex-start;
+}
+
+/* 主按钮：墨色实心 + 细腻按压 */
 .createBtn {
   height: 56px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-m);
   background: var(--primary);
   color: var(--primary-text);
   font-size: 16px;
   font-weight: 600;
+  letter-spacing: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  box-shadow: 0 6px 18px rgb(36 32 26 / 16%);
   transition:
-    opacity 150ms ease,
-    transform 150ms ease;
+    transform 150ms ease,
+    box-shadow 150ms ease;
 }
 
 .createBtn:active {
-  opacity: 0.85;
-  transform: scale(0.985);
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgb(36 32 26 / 14%);
 }
 
 .sectionTitle {
-  margin: 28px 0 12px;
-  font-size: 13px;
-  font-weight: 500;
+  margin: 28px 0 10px;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--text-3);
-  letter-spacing: 0.5px;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionTitle::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }
 
 .list {
@@ -67,8 +100,9 @@
 
 .roomItem {
   background: var(--surface);
-  border-radius: var(--radius-l);
-  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  padding: 15px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -92,41 +126,45 @@
 }
 
 .badge {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-3);
-  background: var(--surface-muted);
-  border: 1px solid var(--border);
-  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--gold-deep);
+  background: var(--gold-soft);
+  padding: 2px 7px;
   border-radius: 100px;
 }
 
 .roomMeta {
-  margin-top: 4px;
-  font-size: 13px;
+  margin-top: 5px;
+  font-size: 12px;
   color: var(--text-3);
+  letter-spacing: 0.5px;
 }
 
 .arrow {
   color: var(--text-3);
+  flex-shrink: 0;
 }
 
+/* ===== 创建弹层表单 ===== */
 .field {
   margin-bottom: 18px;
 }
 
 .label {
   display: block;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-3);
   margin-bottom: 8px;
 }
 
 .input {
   width: 100%;
   height: var(--touch);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-m);
   padding: 0 14px;
   font-size: 16px;
@@ -168,13 +206,14 @@
 }
 
 .addPlayerBtn {
-  height: 40px;
+  height: 44px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   font-size: 14px;
+  font-weight: 500;
   color: var(--text-2);
   border: 1px dashed var(--border-strong);
   border-radius: var(--radius-m);
@@ -188,11 +227,12 @@
 .submitBtn {
   width: 100%;
   height: 52px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-m);
   background: var(--primary);
   color: var(--primary-text);
   font-size: 16px;
   font-weight: 600;
+  letter-spacing: 2px;
   margin-top: 8px;
   transition: opacity 150ms ease;
 }
