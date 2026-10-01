@@ -1,6 +1,7 @@
 .page {
   min-height: 100%;
-  background: var(--page-bg);
+  // 柔和 pastel 渐变背景（参考图：浅青 → 米白）
+  background: linear-gradient(180deg, #d9f0ee 0%, #eef5f0 38%, #f7f2e9 100%);
   display: flex;
   flex-direction: column;
 }
@@ -35,77 +36,72 @@
 
 .scroll {
   flex: 1;
-  padding: 0 16px calc(20px + env(safe-area-inset-bottom));
+  padding: 0 20px calc(20px + env(safe-area-inset-bottom));
   overflow-y: auto;
 }
 
-/* ===== Hero 横幅（深墨绿 + 衬线） ===== */
+/* ===== 标题区（无卡片，直接在渐变背景上） ===== */
 .hero {
-  background: linear-gradient(160deg, var(--ink-green) 0%, var(--ink-green-deep) 100%);
-  border-radius: var(--radius-l);
-  padding: 30px 20px 26px;
-  text-align: center;
-  color: #f5f1e8;
-  margin-bottom: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 内描边：营造卡片精装感 */
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  border: 1px solid rgb(245 241 232 / 18%);
-  border-radius: calc(var(--radius-l) - 6px);
-  pointer-events: none;
+  padding: 8px 4px 4px;
+  margin-bottom: 8px;
 }
 
 .heroTitle {
   margin: 0;
-  font-family: var(--font-serif);
   font-size: 26px;
-  font-weight: 700;
-  letter-spacing: 4px;
-}
-
-.heroRule {
-  width: 36px;
-  height: 2px;
-  background: var(--gold);
-  margin: 12px auto;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #1d3b34;
 }
 
 .heroSub {
-  margin: 0;
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: rgb(245 241 232 / 75%);
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgb(29 59 52 / 62%);
 }
 
-/* ===== 领奖台 ===== */
-.podiumCard {
-  background: var(--surface);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
-  padding: 24px 16px 0;
-  margin-bottom: 16px;
-  overflow: hidden;
-}
-
+/* ===== 3D 圆柱领奖台 ===== */
 .podium {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 12px;
+  gap: 18px;
+  padding: 24px 8px 0;
+  margin-bottom: 20px;
 }
 
 .podiumItem {
   flex: 1;
+  max-width: 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+}
+
+.podiumName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d3b34;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.podiumScore {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 2px 0 8px;
+}
+
+.up {
+  color: var(--up);
+}
+
+.down {
+  color: var(--down);
 }
 
 .podiumAvatar {
@@ -118,94 +114,72 @@
   color: #fff;
   font-size: 18px;
   font-weight: 700;
-  margin-bottom: 8px;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 8px rgb(31 28 24 / 14%);
+  border: 3px solid #fff;
+  box-shadow: 0 4px 12px rgb(29 59 52 / 18%);
+  margin-bottom: -14px; // 悬浮压在柱顶
+  position: relative;
+  z-index: 2;
 }
 
 .first .podiumAvatar {
-  width: 64px;
-  height: 64px;
-  font-size: 24px;
-  border-color: var(--gold);
+  width: 62px;
+  height: 62px;
+  font-size: 22px;
 }
 
 .crown {
-  color: var(--gold);
-  margin-bottom: 4px;
+  color: #e8b64c;
+  margin-bottom: 2px;
 }
 
-.podiumName {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-1);
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.podiumScore {
-  font-family: var(--font-serif);
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-1);
-  line-height: 1.2;
-}
-
-.first .podiumScore {
-  font-size: 30px;
-  color: var(--gold-deep);
-}
-
-.podiumDiff {
-  font-size: 12px;
-  font-weight: 500;
-  margin-bottom: 10px;
-}
-
-.up {
-  color: var(--up);
-}
-
-.down {
-  color: var(--down);
-}
-
-/* 底座 */
+/* 圆柱体：顶部椭圆高光 + 竖向渐变柱身 */
 .podiumBase {
   width: 100%;
-  border-radius: 8px 8px 0 0;
+  border-radius: 999px 999px 12px 12px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-top: 8px;
-  color: rgb(255 255 255 / 85%);
-  font-family: var(--font-serif);
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 34px;
+  font-weight: 800;
+  color: rgb(255 255 255 / 92%);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 -14px 24px rgb(0 0 0 / 8%);
+}
+
+/* 柱顶高光椭圆 */
+.podiumBase::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 35%);
 }
 
 .first .podiumBase {
-  height: 72px;
-  background: linear-gradient(180deg, #c9a24e 0%, var(--gold) 100%);
+  height: 128px;
+  background: linear-gradient(180deg, #7fd8e8 0%, #54b8d8 100%);
+  color: #fff;
 }
 
 .second .podiumBase {
-  height: 52px;
-  background: linear-gradient(180deg, #a9b4bf 0%, var(--silver) 100%);
+  height: 96px;
+  background: linear-gradient(180deg, #f7b8d4 0%, #ee93bd 100%);
 }
 
 .third .podiumBase {
-  height: 40px;
-  background: linear-gradient(180deg, #bb8c5e 0%, var(--bronze) 100%);
+  height: 80px;
+  background: linear-gradient(180deg, #9adfd3 0%, #6ecabb 100%);
 }
 
-/* ===== 剩余排名 ===== */
-.rankCard {
-  background: var(--surface);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
+/* ===== 白色圆角列表卡 ===== */
+.card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgb(29 59 52 / 8%);
   overflow: hidden;
   margin-bottom: 16px;
 }
@@ -214,8 +188,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
+  padding: 14px 18px;
+  border-bottom: 1px solid #f0ede6;
 }
 
 .rankRow:last-child {
@@ -225,22 +199,21 @@
 .rankLeft {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
 .rankNo {
-  width: 22px;
+  width: 20px;
   text-align: center;
-  font-family: var(--font-serif);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
-  color: var(--text-3);
+  color: #b9b2a4;
 }
 
 .rankAvatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -263,28 +236,27 @@
 .rankRight {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .rankScore {
-  font-family: var(--font-serif);
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 17px;
+  font-weight: 800;
   color: var(--text-1);
 }
 
 .rankDiff {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* ===== 对局回顾 ===== */
 .roundCard {
-  background: var(--surface);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
-  padding: 16px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgb(29 59 52 / 8%);
+  padding: 16px 18px;
   margin-bottom: 16px;
   position: relative;
 }
@@ -292,9 +264,9 @@
 .roundTitle {
   margin: 0 0 10px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 1px;
-  color: var(--text-3);
+  color: #b9b2a4;
 }
 
 .roundWrap {
@@ -314,7 +286,7 @@
   position: sticky;
   top: 0;
   z-index: 2;
-  background: var(--surface);
+  background: #fff;
   padding: 8px 10px;
   font-weight: 600;
   color: var(--text-1);
@@ -327,7 +299,7 @@
   padding: 8px 10px;
   text-align: center;
   color: var(--text-1);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #f0ede6;
   white-space: nowrap;
 }
 
@@ -335,7 +307,7 @@
   position: sticky;
   left: 0;
   z-index: 3;
-  background: var(--surface);
+  background: #fff;
   font-size: 12px;
   color: var(--text-3);
 }
@@ -351,8 +323,8 @@
   left: 0;
   right: 0;
   height: 52px;
-  background: linear-gradient(to bottom, transparent, var(--surface));
-  border-radius: 0 0 var(--radius-l) var(--radius-l);
+  background: linear-gradient(to bottom, transparent, #fff);
+  border-radius: 0 0 20px 20px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -369,7 +341,7 @@
 .footerHint {
   text-align: center;
   padding: 8px 0;
-  color: var(--text-3);
+  color: rgb(29 59 52 / 50%);
   font-size: 12px;
   letter-spacing: 1px;
 }

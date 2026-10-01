@@ -75,10 +75,9 @@ export default function ShareView({ roomId, onBack }) {
       </header>
 
       <div className={styles.scroll}>
-        {/* Hero 横幅 */}
+        {/* 标题区 */}
         <div className={styles.hero}>
           <h1 className={styles.heroTitle}>{room.name}</h1>
-          <div className={styles.heroRule} />
           <p className={styles.heroSub}>
             {fmtDate(room.created_at)} · {rows.length} 轮 · {fmtHM(room.created_at)}
             {room.ended_at && ` – ${fmtHM(room.ended_at)}`}
@@ -87,70 +86,65 @@ export default function ShareView({ roomId, onBack }) {
 
         {/* 领奖台 */}
         {top3.length > 0 && (
-          <div className={styles.podiumCard}>
-            <div className={styles.podium}>
-              {top3[1] && (
-                <div className={`${styles.podiumItem} ${styles.second}`}>
-                  <div
-                    className={styles.podiumAvatar}
-                    style={{ background: nameToHsl(top3[1].name) }}
-                  >
-                    <span>{nameInitial(top3[1].name)}</span>
-                  </div>
-                  <div className={styles.podiumScore}>{fmtAmount(top3[1].total)}</div>
-                  <div className={styles.podiumName}>{top3[1].name}</div>
-                  <div
-                    className={`${styles.podiumDiff} ${top3[1].diff >= 0 ? styles.up : styles.down}`}
-                  >
-                    {fmtDiff(top3[1].diff)}
-                  </div>
-                  <div className={styles.podiumBase}>2</div>
+          <div className={styles.podium}>
+            {top3[1] && (
+              <div className={`${styles.podiumItem} ${styles.second}`}>
+                <div className={styles.podiumName}>{top3[1].name}</div>
+                <div
+                  className={`${styles.podiumScore} ${top3[1].diff >= 0 ? styles.up : styles.down}`}
+                >
+                  {fmtDiff(top3[1].diff)}
                 </div>
-              )}
-              {top3[0] && (
-                <div className={`${styles.podiumItem} ${styles.first}`}>
-                  <Crown size={18} strokeWidth={2} className={styles.crown} />
-                  <div
-                    className={styles.podiumAvatar}
-                    style={{ background: nameToHsl(top3[0].name) }}
-                  >
-                    <span>{nameInitial(top3[0].name)}</span>
-                  </div>
-                  <div className={styles.podiumScore}>{fmtAmount(top3[0].total)}</div>
-                  <div className={styles.podiumName}>{top3[0].name}</div>
-                  <div
-                    className={`${styles.podiumDiff} ${top3[0].diff >= 0 ? styles.up : styles.down}`}
-                  >
-                    {fmtDiff(top3[0].diff)}
-                  </div>
-                  <div className={styles.podiumBase}>1</div>
+                <div
+                  className={styles.podiumAvatar}
+                  style={{ background: nameToHsl(top3[1].name) }}
+                >
+                  <span>{nameInitial(top3[1].name)}</span>
                 </div>
-              )}
-              {top3[2] && (
-                <div className={`${styles.podiumItem} ${styles.third}`}>
-                  <div
-                    className={styles.podiumAvatar}
-                    style={{ background: nameToHsl(top3[2].name) }}
-                  >
-                    <span>{nameInitial(top3[2].name)}</span>
-                  </div>
-                  <div className={styles.podiumScore}>{fmtAmount(top3[2].total)}</div>
-                  <div className={styles.podiumName}>{top3[2].name}</div>
-                  <div
-                    className={`${styles.podiumDiff} ${top3[2].diff >= 0 ? styles.up : styles.down}`}
-                  >
-                    {fmtDiff(top3[2].diff)}
-                  </div>
-                  <div className={styles.podiumBase}>3</div>
+                <div className={styles.podiumBase}>2</div>
+              </div>
+            )}
+            {top3[0] && (
+              <div className={`${styles.podiumItem} ${styles.first}`}>
+                <Crown size={18} strokeWidth={2} className={styles.crown} />
+                <div className={styles.podiumName}>{top3[0].name}</div>
+                <div
+                  className={`${styles.podiumScore} ${top3[0].diff >= 0 ? styles.up : styles.down}`}
+                >
+                  {fmtDiff(top3[0].diff)}
                 </div>
-              )}
-            </div>
+                <div
+                  className={styles.podiumAvatar}
+                  style={{ background: nameToHsl(top3[0].name) }}
+                >
+                  <span>{nameInitial(top3[0].name)}</span>
+                </div>
+                <div className={styles.podiumBase}>1</div>
+              </div>
+            )}
+            {top3[2] && (
+              <div className={`${styles.podiumItem} ${styles.third}`}>
+                <div className={styles.podiumName}>{top3[2].name}</div>
+                <div
+                  className={`${styles.podiumScore} ${top3[2].diff >= 0 ? styles.up : styles.down}`}
+                >
+                  {fmtDiff(top3[2].diff)}
+                </div>
+                <div
+                  className={styles.podiumAvatar}
+                  style={{ background: nameToHsl(top3[2].name) }}
+                >
+                  <span>{nameInitial(top3[2].name)}</span>
+                </div>
+                <div className={styles.podiumBase}>3</div>
+              </div>
+            )}
           </div>
         )}
 
         {/* 剩余排名 */}
         {rest.length > 0 && (
-          <div className={styles.rankCard}>
+          <div className={styles.card}>
             {rest.map((r, idx) => (
               <div key={r.playerId} className={styles.rankRow}>
                 <div className={styles.rankLeft}>
