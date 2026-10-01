@@ -1,47 +1,14 @@
 .root {
-  position: relative;
+  width: 100%;
+  min-height: 100%;
+  background: var(--page-bg);
   display: flex;
-  width: 100vw;
-  height: 100dvh;
-  flex-direction: column;
-  overflow: hidden;
-  background-color: var(--clock-bg);
-  font-family: var(--clock-font);
-
-  .guide {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    left: 0;
-    height: 1px;
-    background-color: var(--clock-guide);
-  }
-
-  .stage {
-    position: relative;
-    display: flex;
-    align-self: center;
-    min-height: 0;
-    flex: 1 1 auto;
-    overflow: hidden;
-
-    .lane {
-      position: relative;
-      min-width: 0;
-      flex: 1 1 0;
-      overflow: hidden;
-    }
-  }
+  justify-content: center;
 }
 
-@media (orientation: portrait) and (width <= 767px) {
-  .root {
-    position: fixed;
-    top: 0;
-    left: 100vw;
-    width: 100dvh;
-    height: 100vw;
-    transform: rotate(90deg);
-    transform-origin: top left;
-  }
+.inner {
+  width: 100%;
+  max-width: var(--app-max-w);
+  min-height: 100%;
+  position: relative;
 }

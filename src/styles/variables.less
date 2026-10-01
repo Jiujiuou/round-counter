@@ -1,16 +1,37 @@
 :root {
-  --page-bg: #f3f5f7; // 页面及空白区域底色
-  --panel-bg: #fff; // 三个模块的底色
-  --header-height: 8vh; // Header 高度
-  --control-width: 20vw; // Control 宽度
-  --body-padding: 1vw; // Body 四周内边距
-  --layout-gap: 1vw; // Stage 与 Control 之间的间距
-  --panel-radius: 0.6vw; // Stage 与 Control 的圆角
-  --panel-shadow: 0.25vw 0.4vh 0.8vw rgb(0 0 0 / 16%); // 三个模块的右下阴影
-  --clock-bg: #000;
-  --clock-fg: #fff;
-  --clock-guide: rgb(255 255 255 / 35%);
-  --clock-tick: rgb(255 255 255 / 70%);
-  --clock-minor-tick-opacity: 0.8;
-  --clock-font: bahnschrift, 'Arial Narrow', arial, helvetica, sans-serif;
+  // ===== 主 App · 浅色工具风 =====
+  --page-bg: #f3f5f7;
+  --surface: #fff;
+  --surface-muted: #f7f8fa;
+  --border: #e5e8ec;
+  --border-strong: #d4d8de;
+  --text-1: #1a1d21;
+  --text-2: #5f6670;
+  --text-3: #9aa1ab;
+  --primary: #1a1d21; // 主按钮：黑
+  --primary-text: #fff;
+  --danger: #d64545;
+  --up: #1a8f5c; // 水上（正分）
+  --down: #d64545; // 水下（负分）
+  --scrim: rgb(20 22 28 / 48%); // 弹层遮罩
+
+  // ===== 结算页点缀 =====
+  --gold: #c9993f; // 浅底上更稳的金色
+  --gold-soft: rgb(201 153 63 / 12%);
+  --silver: #9aa4b2;
+  --bronze: #b08968;
+
+  // ===== 尺寸 =====
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 16px;
+  --touch: 44px;
+  --header-h: 52px;
+  --bottombar-h: 64px;
+  --app-max-w: 480px;
+  --font:
+    -apple-system, blinkmacsystemfont, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei',
+    sans-serif;
+  --shadow-card: 0 1px 2px rgb(20 22 28 / 4%), 0 4px 16px rgb(20 22 28 / 6%);
+  --shadow-sheet: 0 -8px 32px rgb(20 22 28 / 16%);
 }
