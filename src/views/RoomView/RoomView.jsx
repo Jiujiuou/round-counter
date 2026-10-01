@@ -265,7 +265,9 @@ export default function RoomView({ roomId, onBack, onFinish }) {
                             style={{ minWidth: cellMinW }}
                             onClick={() => openEdit(row.roundId, p.id, s)}
                           >
-                            <span className="num">{fmtScore(s)}</span>
+                            <span className={`num ${s != null && s < 0 ? styles.scoreNeg : ''}`}>
+                              {fmtScore(s)}
+                            </span>
                           </td>
                         )
                       })}

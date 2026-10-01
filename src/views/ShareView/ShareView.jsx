@@ -78,6 +78,7 @@ export default function ShareView({ roomId, onBack }) {
         {/* Hero 横幅 */}
         <div className={styles.hero}>
           <h1 className={styles.heroTitle}>{room.name}</h1>
+          <div className={styles.heroRule} />
           <p className={styles.heroSub}>
             {fmtDate(room.created_at)} · {rows.length} 轮 · {fmtHM(room.created_at)}
             {room.ended_at && ` – ${fmtHM(room.ended_at)}`}
@@ -103,6 +104,7 @@ export default function ShareView({ roomId, onBack }) {
                   >
                     {fmtDiff(top3[1].diff)}
                   </div>
+                  <div className={styles.podiumBase}>2</div>
                 </div>
               )}
               {top3[0] && (
@@ -121,6 +123,7 @@ export default function ShareView({ roomId, onBack }) {
                   >
                     {fmtDiff(top3[0].diff)}
                   </div>
+                  <div className={styles.podiumBase}>1</div>
                 </div>
               )}
               {top3[2] && (
@@ -138,6 +141,7 @@ export default function ShareView({ roomId, onBack }) {
                   >
                     {fmtDiff(top3[2].diff)}
                   </div>
+                  <div className={styles.podiumBase}>3</div>
                 </div>
               )}
             </div>

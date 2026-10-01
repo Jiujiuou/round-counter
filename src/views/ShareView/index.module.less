@@ -39,29 +39,48 @@
   overflow-y: auto;
 }
 
-/* ===== Hero 横幅（紫蓝渐变） ===== */
+/* ===== Hero 横幅（深墨绿 + 衬线） ===== */
 .hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 60%, #9b59b6 100%);
+  background: linear-gradient(160deg, var(--ink-green) 0%, var(--ink-green-deep) 100%);
   border-radius: var(--radius-l);
-  padding: 28px 20px;
+  padding: 30px 20px 26px;
   text-align: center;
-  color: #fff;
+  color: #f5f1e8;
   margin-bottom: 16px;
-  box-shadow: 0 8px 24px rgb(102 126 234 / 28%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 内描边：营造卡片精装感 */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgb(245 241 232 / 18%);
+  border-radius: calc(var(--radius-l) - 6px);
+  pointer-events: none;
 }
 
 .heroTitle {
   margin: 0;
-  font-size: 22px;
+  font-family: var(--font-serif);
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: 1px;
-  text-shadow: 0 1px 2px rgb(0 0 0 / 12%);
+  letter-spacing: 4px;
+}
+
+.heroRule {
+  width: 36px;
+  height: 2px;
+  background: var(--gold);
+  margin: 12px auto;
 }
 
 .heroSub {
-  margin: 8px 0 0;
-  font-size: 13px;
-  opacity: 0.88;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgb(245 241 232 / 75%);
 }
 
 /* ===== 领奖台 ===== */
@@ -69,16 +88,16 @@
   background: var(--surface);
   border-radius: var(--radius-l);
   box-shadow: var(--shadow-card);
-  padding: 20px 16px 16px;
+  padding: 24px 16px 0;
   margin-bottom: 16px;
+  overflow: hidden;
 }
 
 .podium {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 10px;
-  min-height: 200px;
+  gap: 12px;
 }
 
 .podiumItem {
@@ -87,38 +106,11 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 12px 6px;
-  border-radius: var(--radius-l);
-  position: relative;
-}
-
-.first {
-  background: linear-gradient(180deg, rgb(255 215 0 / 14%) 0%, rgb(255 215 0 / 6%) 100%);
-  border: 1px solid rgb(255 215 0 / 35%);
-  padding-top: 28px;
-  padding-bottom: 16px;
-  transform: translateY(-12px);
-}
-
-.second {
-  background: linear-gradient(180deg, rgb(192 192 192 / 14%) 0%, rgb(192 192 192 / 6%) 100%);
-  border: 1px solid rgb(192 192 192 / 30%);
-}
-
-.third {
-  background: linear-gradient(180deg, rgb(205 127 50 / 14%) 0%, rgb(205 127 50 / 6%) 100%);
-  border: 1px solid rgb(205 127 50 / 30%);
-}
-
-.crown {
-  position: absolute;
-  top: 6px;
-  color: var(--gold);
 }
 
 .podiumAvatar {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -127,27 +119,49 @@
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 8px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgb(31 28 24 / 14%);
 }
 
-.podiumScore {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--text-1);
-  line-height: 1;
+.first .podiumAvatar {
+  width: 64px;
+  height: 64px;
+  font-size: 24px;
+  border-color: var(--gold);
+}
+
+.crown {
+  color: var(--gold);
+  margin-bottom: 4px;
 }
 
 .podiumName {
-  margin-top: 4px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-1);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.podiumScore {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1.2;
+}
+
+.first .podiumScore {
+  font-size: 30px;
+  color: var(--gold-deep);
 }
 
 .podiumDiff {
-  margin-top: 2px;
   font-size: 12px;
   font-weight: 500;
+  margin-bottom: 10px;
 }
 
 .up {
@@ -156,6 +170,35 @@
 
 .down {
   color: var(--down);
+}
+
+/* 底座 */
+.podiumBase {
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+  color: rgb(255 255 255 / 85%);
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.first .podiumBase {
+  height: 72px;
+  background: linear-gradient(180deg, #c9a24e 0%, var(--gold) 100%);
+}
+
+.second .podiumBase {
+  height: 52px;
+  background: linear-gradient(180deg, #a9b4bf 0%, var(--silver) 100%);
+}
+
+.third .podiumBase {
+  height: 40px;
+  background: linear-gradient(180deg, #bb8c5e 0%, var(--bronze) 100%);
 }
 
 /* ===== 剩余排名 ===== */
@@ -189,8 +232,9 @@
 .rankNo {
   width: 22px;
   text-align: center;
-  font-size: 13px;
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 700;
   color: var(--text-3);
 }
 
@@ -224,7 +268,8 @@
 }
 
 .rankScore {
-  font-size: 15px;
+  font-family: var(--font-serif);
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-1);
 }
@@ -246,9 +291,10 @@
 
 .roundTitle {
   margin: 0 0 10px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: var(--text-3);
 }
 
 .roundWrap {
@@ -272,7 +318,7 @@
   padding: 8px 10px;
   font-weight: 600;
   color: var(--text-1);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-strong);
   white-space: nowrap;
   text-align: center;
 }
@@ -306,6 +352,7 @@
   right: 0;
   height: 52px;
   background: linear-gradient(to bottom, transparent, var(--surface));
+  border-radius: 0 0 var(--radius-l) var(--radius-l);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -316,9 +363,6 @@
 .roundFade span {
   font-size: 12px;
   color: var(--text-3);
-  background: rgb(255 255 255 / 80%);
-  padding: 2px 10px;
-  border-radius: 12px;
 }
 
 /* ===== 底部提示 ===== */
@@ -327,4 +371,5 @@
   padding: 8px 0;
   color: var(--text-3);
   font-size: 12px;
+  letter-spacing: 1px;
 }
