@@ -1,7 +1,6 @@
 .page {
   min-height: 100%;
   background: var(--page-bg);
-  color: var(--text-1);
   display: flex;
   flex-direction: column;
 }
@@ -34,92 +33,21 @@
   border-radius: var(--radius-s);
 }
 
-.iconBtn:active {
-  background: var(--surface-muted);
+.headerTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.copyLabel {
+  font-size: 13px;
+  color: var(--text-2);
 }
 
 .scroll {
   flex: 1;
   padding: 0 16px calc(20px + env(safe-area-inset-bottom));
   overflow-y: auto;
-}
-
-/* ===== Hero ===== */
-.hero {
-  background: var(--surface);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
-  text-align: center;
-  padding: 28px 20px 20px;
-  margin-bottom: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 顶部金色细带，点出仪式感 */
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--gold);
-}
-
-.trophyWrap {
-  width: 72px;
-  height: 72px;
-  margin: 0 auto 14px;
-  border-radius: 50%;
-  background: var(--gold-soft);
-  border: 1px solid rgb(228 185 91 / 40%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.trophy {
-  color: var(--gold);
-}
-
-.champion {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--text-1);
-}
-
-.championScore {
-  margin-top: 2px;
-  font-size: 16px;
-  color: var(--text-2);
-}
-
-.championScore span {
-  font-weight: 700;
-  font-size: 22px;
-  color: var(--gold);
-}
-
-.divider {
-  width: 48px;
-  height: 1px;
-  background: var(--border-strong);
-  margin: 16px auto 12px;
-}
-
-.metaTitle {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-1);
-}
-
-.metaSub {
-  margin-top: 2px;
-  font-size: 12px;
-  color: var(--text-3);
 }
 
 /* ===== Section ===== */
@@ -219,70 +147,6 @@
   color: var(--text-3);
 }
 
-/* ===== 表格 ===== */
-.tableWrap {
-  background: var(--surface);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
-  overflow: auto;
-  max-height: 260px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.table {
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 14px;
-  min-width: 100%;
-}
-
-.th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--surface);
-  padding: 10px 12px;
-  font-weight: 600;
-  color: var(--text-1);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-  text-align: center;
-}
-
-.td {
-  padding: 10px 12px;
-  text-align: center;
-  color: var(--text-1);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.stickyCol {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-  background: var(--surface);
-}
-
-.th.stickyCol {
-  z-index: 4;
-}
-
-.roundNum {
-  color: var(--text-3);
-  font-size: 12px;
-}
-
-tfoot .td {
-  border-bottom: none;
-  border-top: 1px solid var(--border-strong);
-}
-
-.totalCell {
-  font-weight: 700;
-  color: var(--gold);
-}
-
 /* ===== 结算清单 ===== */
 .noDebt {
   background: var(--surface);
@@ -324,7 +188,7 @@ tfoot .td {
 }
 
 .to {
-  color: var(--gold);
+  color: var(--up);
   font-weight: 600;
 }
 
@@ -338,14 +202,27 @@ tfoot .td {
 .actions {
   display: flex;
   gap: 12px;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
-.shareBtn,
+.primaryBtn {
+  flex: 1;
+  height: 50px;
+  border-radius: var(--radius-l);
+  background: var(--primary);
+  color: var(--primary-text);
+  font-size: 15px;
+  font-weight: 600;
+  transition: opacity 150ms ease;
+}
+
 .rematchBtn {
   flex: 1;
   height: 50px;
   border-radius: var(--radius-l);
+  background: var(--surface);
+  color: var(--text-1);
+  border: 1px solid var(--border-strong);
   font-size: 15px;
   font-weight: 600;
   display: flex;
@@ -355,18 +232,7 @@ tfoot .td {
   transition: opacity 150ms ease;
 }
 
-.shareBtn {
-  background: var(--primary);
-  color: var(--primary-text);
-}
-
-.rematchBtn {
-  background: var(--surface);
-  color: var(--text-1);
-  border: 1px solid var(--border-strong);
-}
-
-.shareBtn:active,
+.primaryBtn:active,
 .rematchBtn:active {
   opacity: 0.8;
 }

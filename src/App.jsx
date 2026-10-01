@@ -3,6 +3,7 @@ import { Layout, Toast } from '@/components'
 import HomeView from '@/views/HomeView/HomeView'
 import RoomView from '@/views/RoomView/RoomView'
 import SettlementView from '@/views/SettlementView/SettlementView'
+import ShareView from '@/views/ShareView/ShareView'
 import { createRoom } from '@/hooks/useRoom'
 import { supabase, supabaseReady } from '@/lib/supabase'
 import { touchRoom } from '@/utils/roomStorage'
@@ -11,8 +12,13 @@ function getRoomParam() {
   return new URLSearchParams(window.location.search).get('room')
 }
 
+function getViewParam() {
+  return new URLSearchParams(window.location.search).get('view')
+}
+
 export default function App() {
   const [roomId, setRoomId] = useState(() => getRoomParam())
+  const [view, setView] = useState(() => getViewParam()) // null | 'share'
   // settled: 进入结算页的房间 id（含 status 确认）
   const [settleMode, setSettleMode] = useState(null) // null | 'loading' | 'yes' | 'no'
   const [toast, setToast] = useState(null)
@@ -26,6 +32,7 @@ export default function App() {
     if (getRoomParam() !== id) {
       history.pushState(null, '', `?room=${id}`)
     }
+    setView(null)
     setSettleMode('loading')
     setRoomId(id)
   }, [])
@@ -33,6 +40,7 @@ export default function App() {
   const goHome = useCallback(() => {
     history.pushState(null, '', window.location.pathname)
     setRoomId(null)
+    setView(null)
     setSettleMode(null)
   }, [])
 
@@ -40,6 +48,7 @@ export default function App() {
     const onPop = () => {
       const id = getRoomParam()
       setSettleMode(id ? 'loading' : null)
+      setView(getViewParam())
       setRoomId(id)
     }
     window.addEventListener('popstate', onPop)
@@ -67,6 +76,16 @@ export default function App() {
   const handleFinish = useCallback(() => {
     setSettleMode('yes')
   }, [])
+
+  const goShare = useCallback(() => {
+    history.pushState(null, '', `?room=${roomId}&view=share`)
+    setView('share')
+  }, [roomId])
+
+  const goSettle = useCallback(() => {
+    history.pushState(null, '', `?room=${roomId}`)
+    setView(null)
+  }, [roomId])
 
   const handleRematch = useCallback(
     async (oldName, playerNames) => {
@@ -96,7 +115,18 @@ export default function App() {
       <div style={{ padding: 32, textAlign: 'center', color: 'var(--text-3)' }}>加载中…</div>
     )
   } else if (settleMode === 'yes') {
-    content = <SettlementView roomId={roomId} onBack={goHome} onRematch={handleRematch} />
+    if (view === 'share') {
+      content = <ShareView roomId={roomId} onBack={goSettle} />
+    } else {
+      content = (
+        <SettlementView
+          roomId={roomId}
+          onBack={goHome}
+          onRematch={handleRematch}
+          onShare={goShare}
+        />
+      )
+    }
   } else {
     content = <RoomView roomId={roomId} onBack={goHome} onFinish={handleFinish} />
   }
