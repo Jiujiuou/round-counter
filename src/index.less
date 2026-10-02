@@ -23,6 +23,7 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: var(--text-1);
+  background: var(--page-bg);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -41,11 +42,6 @@ button {
 input {
   font-family: inherit;
   font-size: 16px; // 防止 iOS 聚焦自动放大
-}
-
-// 数字等宽，防止分数跳动
-.num {
-  font-variant-numeric: tabular-nums;
 }
 
 body::-webkit-scrollbar,

@@ -183,20 +183,6 @@ export function useRoom(roomId) {
     [showToast, load],
   )
 
-  const deleteRound = useCallback(
-    async (roundId) => {
-      if (!supabaseReady) return { ok: false }
-      const { error } = await supabase.from('rounds').delete().eq('id', roundId)
-      if (error) {
-        showToast('删除失败')
-        return { ok: false }
-      }
-      await load(true)
-      return { ok: true }
-    },
-    [showToast, load],
-  )
-
   const finishRoom = useCallback(async () => {
     if (!supabaseReady) return { ok: false }
     const { error } = await supabase
@@ -220,11 +206,9 @@ export function useRoom(roomId) {
     toast,
     netError,
     showToast,
-    reload: () => load(true),
     addPlayer,
     saveRound,
     updateScore,
-    deleteRound,
     finishRoom,
   }
 }
