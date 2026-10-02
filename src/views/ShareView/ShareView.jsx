@@ -1,22 +1,34 @@
 import { useMemo } from 'react'
-import { ArrowLeft, Crown, Share2 } from 'lucide-react'
+import { Share2 } from 'lucide-react'
 import { useRoom } from '@/hooks/useRoom'
-import { nameToHsl, nameInitial } from '@/utils/colorHash'
-import { fmtAmount, fmtDiff, settle } from '@/utils/settlement'
+import { fmtDiff, settle } from '@/utils/settlement'
 import { Toast } from '@/components'
 import styles from '@/views/ShareView/index.module.less'
 
-function fmtDate(ts) {
-  const d = new Date(ts)
-  return `${d.getMonth() + 1}月${d.getDate()}日`
+const CN_DIGITS = ['一', '二', '三', '四', '五', '六', '七', '八', '九']
+
+/** 1-99 转中文数字，超出范围回退阿拉伯数字 */
+function toCnNum(n) {
+  if (!Number.isInteger(n) || n < 1 || n > 99) return String(n)
+  if (n < 10) return CN_DIGITS[n - 1]
+  const ten = Math.floor(n / 10)
+  const one = n % 10
+  const tensPart = ten === 1 ? '十' : `${CN_DIGITS[ten - 1]}十`
+  return one === 0 ? tensPart : `${tensPart}${CN_DIGITS[one - 1]}`
 }
 
-function fmtHM(ts) {
-  const d = new Date(ts)
-  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+/** 「四十五分钟」/「两小时十五分钟」/「不足一分钟」 */
+function fmtDurationCn(createdAt, endedAt) {
+  if (!createdAt || !endedAt) return null
+  const mins = Math.round((new Date(endedAt) - new Date(createdAt)) / 60000)
+  if (mins < 1) return '不足一分钟'
+  const h = Math.floor(mins / 60)
+  const m = mins % 60
+  if (h === 0) return `${toCnNum(mins)}分钟`
+  return m === 0 ? `${toCnNum(h)}小时` : `${toCnNum(h)}小时${toCnNum(m)}分钟`
 }
 
-export default function ShareView({ roomId, onBack }) {
+export default function ShareView({ roomId }) {
   const { loading, room, players, rows, toast, showToast } = useRoom(roomId)
 
   const totalsArr = useMemo(
@@ -32,18 +44,17 @@ export default function ShareView({ roomId, onBack }) {
   const { rows: settledRows } = useMemo(() => settle(totalsArr), [totalsArr])
   const ranked = useMemo(() => [...settledRows].sort((a, b) => b.total - a.total), [settledRows])
 
-  const top3 = ranked.slice(0, 3)
-  const rest = ranked.slice(3)
+  const winner = ranked[0]
+  const seats = ranked.slice(1)
 
-  // 展示最近最多 5 轮
-  const previewRounds = rows.slice(0, 5)
-  const hasMoreRounds = rows.length > 5
+  const duration = room ? fmtDurationCn(room.created_at, room.ended_at) : null
+  const metaText = `${toCnNum(rows.length)}轮已竞${duration ? ` · ${duration}` : ''}`
 
   const handleShare = async () => {
     const url = window.location.href
     if (navigator.share) {
       try {
-        await navigator.share({ title: room?.name || '计分板', url })
+        await navigator.share({ title: room?.name || '对局战报', url })
       } catch {}
     } else {
       try {
@@ -65,154 +76,58 @@ export default function ShareView({ roomId, onBack }) {
 
   return (
     <div className={styles.page}>
-      <header className={styles.topBar}>
-        <button className={styles.iconBtn} onClick={onBack} aria-label="返回">
-          <ArrowLeft size={22} strokeWidth={1.8} />
-        </button>
-        <button className={styles.iconBtn} onClick={handleShare} aria-label="分享">
-          <Share2 size={20} strokeWidth={1.8} />
-        </button>
-      </header>
-
       <div className={styles.scroll}>
-        {/* 标题区 */}
-        <div className={styles.hero}>
-          <h1 className={styles.heroTitle}>{room.name}</h1>
-          <p className={styles.heroSub}>
-            {fmtDate(room.created_at)} · {rows.length} 轮 · {fmtHM(room.created_at)}
-            {room.ended_at && ` – ${fmtHM(room.ended_at)}`}
-          </p>
+        {/* 战报海报 */}
+        <div className={styles.poster}>
+          <div className={styles.divider} />
+          <div className={styles.posterHead}>
+            <h1 className={styles.posterTitle}>对局战报</h1>
+            <span className={styles.posterMeta}>{metaText}</span>
+          </div>
+
+          {/* 头名 */}
+          {winner && (
+            <div className={styles.winnerBlock}>
+              <div className={styles.winnerLeft}>
+                <div className={styles.winnerTags}>
+                  <span className={styles.winnerBadge}>头名</span>
+                  <span className={styles.winnerSub}>本场胜家</span>
+                </div>
+                <span className={styles.winnerName}>{winner.name}</span>
+              </div>
+              <span className={styles.winnerScore}>{fmtDiff(winner.total)}</span>
+            </div>
+          )}
+
+          {/* 全员终局席位 */}
+          {seats.length > 0 && (
+            <div className={styles.seats}>
+              <div className={styles.seatsLabel}>全员终局席位</div>
+              <div className={styles.seatList}>
+                {seats.map((r, idx) => (
+                  <div key={r.playerId} className={styles.seatRow}>
+                    <div className={styles.seatLeft}>
+                      <span className={styles.seatNo}>{toCnNum(idx + 2)}</span>
+                      <span className={styles.seatName}>{r.name}</span>
+                    </div>
+                    <span
+                      className={`${styles.seatScore} ${r.total < 0 ? styles.seatScoreNeg : ''}`}
+                    >
+                      {fmtDiff(r.total)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* 领奖台 */}
-        {top3.length > 0 && (
-          <div className={styles.podium}>
-            {top3[1] && (
-              <div className={`${styles.podiumItem} ${styles.second}`}>
-                <div className={styles.podiumName}>{top3[1].name}</div>
-                <div className={`${styles.podiumScore} num`}>{fmtAmount(top3[1].total)}</div>
-                <div
-                  className={`${styles.podiumDiff} num ${top3[1].diff >= 0 ? styles.up : styles.down}`}
-                >
-                  {fmtDiff(top3[1].diff)}
-                </div>
-                <div
-                  className={styles.podiumAvatar}
-                  style={{ background: nameToHsl(top3[1].name) }}
-                >
-                  <span>{nameInitial(top3[1].name)}</span>
-                </div>
-                <div className={styles.podiumBase}>2</div>
-              </div>
-            )}
-            {top3[0] && (
-              <div className={`${styles.podiumItem} ${styles.first}`}>
-                <Crown size={18} strokeWidth={2} className={styles.crown} />
-                <div className={styles.podiumName}>{top3[0].name}</div>
-                <div className={`${styles.podiumScore} num`}>{fmtAmount(top3[0].total)}</div>
-                <div
-                  className={`${styles.podiumDiff} num ${top3[0].diff >= 0 ? styles.up : styles.down}`}
-                >
-                  {fmtDiff(top3[0].diff)}
-                </div>
-                <div
-                  className={styles.podiumAvatar}
-                  style={{ background: nameToHsl(top3[0].name) }}
-                >
-                  <span>{nameInitial(top3[0].name)}</span>
-                </div>
-                <div className={styles.podiumBase}>1</div>
-              </div>
-            )}
-            {top3[2] && (
-              <div className={`${styles.podiumItem} ${styles.third}`}>
-                <div className={styles.podiumName}>{top3[2].name}</div>
-                <div className={`${styles.podiumScore} num`}>{fmtAmount(top3[2].total)}</div>
-                <div
-                  className={`${styles.podiumDiff} num ${top3[2].diff >= 0 ? styles.up : styles.down}`}
-                >
-                  {fmtDiff(top3[2].diff)}
-                </div>
-                <div
-                  className={styles.podiumAvatar}
-                  style={{ background: nameToHsl(top3[2].name) }}
-                >
-                  <span>{nameInitial(top3[2].name)}</span>
-                </div>
-                <div className={styles.podiumBase}>3</div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* 剩余排名 */}
-        {rest.length > 0 && (
-          <div className={styles.card}>
-            {rest.map((r, idx) => (
-              <div key={r.playerId} className={styles.rankRow}>
-                <div className={styles.rankLeft}>
-                  <span className={styles.rankNo}>{idx + 4}</span>
-                  <div className={styles.rankAvatar} style={{ background: nameToHsl(r.name) }}>
-                    <span>{nameInitial(r.name)}</span>
-                  </div>
-                  <span className={styles.rankName}>{r.name}</span>
-                </div>
-                <div className={styles.rankRight}>
-                  <span className={`${styles.rankScore} num`}>{fmtAmount(r.total)}</span>
-                  <span
-                    className={`${styles.rankDiff} num ${r.diff >= 0 ? styles.up : styles.down}`}
-                  >
-                    {fmtDiff(r.diff)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* 对局回顾 */}
-        {previewRounds.length > 0 && (
-          <div className={styles.roundCard}>
-            <h3 className={styles.roundTitle}>对局回顾</h3>
-            <div className={styles.roundWrap}>
-              <table className={styles.roundTable}>
-                <thead>
-                  <tr>
-                    <th className={`${styles.roundTh} ${styles.roundStickyCol}`} />
-                    {players.map((p) => (
-                      <th key={p.id} className={styles.roundTh}>
-                        {p.name}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {previewRounds.map((row) => (
-                    <tr key={row.roundId}>
-                      <td className={`${styles.roundTd} ${styles.roundStickyCol}`}>
-                        {row.roundNumber}
-                      </td>
-                      {players.map((p) => (
-                        <td key={p.id} className={`${styles.roundTd} num`}>
-                          {row.scores[p.id] ?? ''}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {hasMoreRounds && (
-              <div className={styles.roundFade}>
-                <span>还有 {rows.length - 5} 轮对局</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* 底部提示 */}
-        <div className={styles.footerHint}>
-          <p>长按可保存截图分享</p>
+        {/* 操作 */}
+        <div className={styles.actions}>
+          <button className={styles.shareBtn} onClick={handleShare}>
+            <Share2 size={16} strokeWidth={1.8} />
+            <span>分享至微信好友与群聊</span>
+          </button>
         </div>
       </div>
 

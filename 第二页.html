@@ -1,0 +1,109 @@
+<!DOCTYPE html><html class="h-full" lang="zh-CN" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>实时计分</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    @layer base {
+      html, body {
+        height: 100%;
+        background-color: #ffffff;
+        color: #000000;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 0px);
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body class="h-full w-full max-w-[430px] mx-auto bg-white text-black flex flex-col justify-between overflow-hidden select-none border-x border-neutral-100 shadow-sm">
+<!-- 顶部导航与状态信息栏 -->
+<header class="w-full flex-none bg-white border-b border-neutral-200 pt-safe z-30"><div class="relative flex items-center justify-center px-4 h-13 py-3 border-b border-neutral-200">
+<button aria-label="返回" class="absolute left-4 w-9 h-9 flex items-center justify-center text-xl font-medium text-black active:opacity-40 transition-opacity" type="button">
+    ←
+  </button>
+<h1 class="text-lg font-bold tracking-tight text-black text-center">蹲麻子</h1>
+</div></header>
+<!-- 中间表格区域：可独立横向纵向滚动，首行与首列精准固定 -->
+<main class="flex-1 min-h-0 w-full overflow-hidden flex flex-col bg-white"><div class="flex-1 min-h-0 w-full overflow-auto relative">
+<table class="w-full text-center border-collapse text-sm">
+<thead>
+<tr class="bg-neutral-100/80 border-b border-neutral-200">
+<th class="sticky top-0 left-0 z-20 bg-neutral-100 text-neutral-500 text-xs font-semibold py-3 px-2.5 text-center border-b border-r border-neutral-200 whitespace-nowrap min-w-[70px]">轮次</th>
+<th class="sticky top-0 z-10 bg-neutral-100 text-black text-xs font-bold py-3 px-2 border-b border-r border-neutral-200 whitespace-nowrap min-w-[64px]">张三</th>
+<th class="sticky top-0 z-10 bg-neutral-100 text-black text-xs font-bold py-3 px-2 border-b border-r border-neutral-200 whitespace-nowrap min-w-[64px]">李四</th>
+<th class="sticky top-0 z-10 bg-neutral-100 text-black text-xs font-bold py-3 px-2 border-b border-r border-neutral-200 whitespace-nowrap min-w-[64px]">王五</th>
+<th class="sticky top-0 z-10 bg-neutral-100 text-black text-xs font-bold py-3 px-2 border-b border-neutral-200 whitespace-nowrap min-w-[64px]">赵六</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-neutral-100 text-sm">
+<tr class="hover:bg-neutral-50/50 transition-colors">
+<td class="sticky left-0 z-10 bg-white text-neutral-400 text-xs font-medium py-3.5 px-2.5 text-center border-r border-neutral-200 whitespace-nowrap">第1轮</td>
+<td class="py-3.5 px-2 text-black font-semibold tracking-tight border-r border-neutral-100 whitespace-nowrap">+14</td>
+<td class="py-3.5 px-2 text-black font-semibold tracking-tight border-r border-neutral-100 whitespace-nowrap">+6</td>
+<td class="py-3.5 px-2 text-neutral-600 font-medium tracking-tight border-r border-neutral-100 whitespace-nowrap">-8</td>
+<td class="py-3.5 px-2 text-neutral-600 font-medium tracking-tight whitespace-nowrap">-12</td>
+</tr>
+<tr class="bg-neutral-50/40 hover:bg-neutral-50 transition-colors">
+<td class="sticky left-0 z-10 bg-neutral-50 text-neutral-400 text-xs font-medium py-3.5 px-2.5 text-center border-r border-neutral-200 whitespace-nowrap">第2轮</td>
+<td class="py-3.5 px-2 text-black font-semibold tracking-tight border-r border-neutral-100 whitespace-nowrap">+8</td>
+<td class="py-3.5 px-2 text-neutral-600 font-medium tracking-tight border-r border-neutral-100 whitespace-nowrap">-4</td>
+<td class="py-3.5 px-2 text-black font-semibold tracking-tight border-r border-neutral-100 whitespace-nowrap">+10</td>
+<td class="py-3.5 px-2 text-neutral-600 font-medium tracking-tight whitespace-nowrap">-14</td>
+</tr>
+<tr class="hover:bg-neutral-50/50 transition-colors">
+<td class="sticky left-0 z-10 bg-white text-neutral-400 text-xs font-medium py-3.5 px-2.5 text-center border-r border-neutral-200 whitespace-nowrap">第3轮</td>
+<td class="py-3.5 px-2 text-neutral-600 font-medium tracking-tight border-r border-neutral-100 whitespace-nowrap">-2</td>
+<td class="py-3.5 px-2 text-black font-semibold tracking-tight border-r border-neutral-100 whitespace-nowrap">+12</td>
+<td class="py-3.5 px-2 text-neutral-600 font-medium tracking-tight border-r border-neutral-100 whitespace-nowrap">-6</td>
+<td class="py-3.5 px-2 text-neutral-600 font-medium tracking-tight whitespace-nowrap">-4</td>
+</tr>
+<tr class="bg-neutral-50/40 hover:bg-neutral-50 transition-colors">
+<td class="sticky left-0 z-10 bg-neutral-50 text-neutral-400 text-xs font-medium py-3.5 px-2.5 text-center border-r border-neutral-200 whitespace-nowrap">第4轮</td>
+<td class="py-3.5 px-2 text-black font-semibold tracking-tight border-r border-neutral-100 whitespace-nowrap">+22</td>
+<td class="py-3.5 px-2 text-black font-semibold tracking-tight border-r border-neutral-100 whitespace-nowrap">+4</td>
+<td class="py-3.5 px-2 text-neutral-600 font-medium tracking-tight border-r border-neutral-100 whitespace-nowrap">-12</td>
+<td class="py-3.5 px-2 text-neutral-600 font-medium tracking-tight whitespace-nowrap">-14</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex-none w-full bg-neutral-50 border-t-2 border-black">
+<table class="w-full text-center border-collapse">
+<tbody>
+<tr>
+<td class="text-xs font-bold text-black py-3.5 px-2.5 text-center border-r border-neutral-200 whitespace-nowrap min-w-[70px] bg-neutral-100/70">总计</td>
+<td class="text-base font-bold text-black py-3.5 px-2 border-r border-neutral-200/80 whitespace-nowrap min-w-[64px]">+42</td>
+<td class="text-base font-bold text-black py-3.5 px-2 border-r border-neutral-200/80 whitespace-nowrap min-w-[64px]">+18</td>
+<td class="text-base font-bold text-neutral-700 py-3.5 px-2 border-r border-neutral-200/80 whitespace-nowrap min-w-[64px]">-16</td>
+<td class="text-base font-bold text-neutral-700 py-3.5 px-2 whitespace-nowrap min-w-[64px]">-44</td>
+</tr>
+</tbody>
+</table>
+</div></main>
+<!-- 底部固定操作区域 -->
+<footer class="flex-none w-full bg-white border-t border-neutral-200 p-4 pb-safe flex flex-col gap-3"><div class="grid grid-cols-2 gap-3">
+<button class="h-12 bg-black text-white text-sm font-semibold flex items-center justify-center tracking-tight shadow-sm active:bg-neutral-800 transition-colors" type="button">
+    录入下一轮
+  </button>
+<button class="h-12 bg-white text-black border border-neutral-300 text-sm font-semibold flex items-center justify-center tracking-tight active:bg-neutral-50 transition-colors shadow-2xs" type="button">
+    添加玩家
+  </button>
+</div>
+<div class="pt-1 flex justify-center">
+<button class="w-full h-10 bg-neutral-100 text-neutral-600 text-xs font-medium tracking-wide flex items-center justify-center hover:text-black active:bg-neutral-200 transition-colors border border-neutral-200/60" type="button">
+    结束对局并结算
+  </button>
+</div></footer>
+
+
+</body></html>

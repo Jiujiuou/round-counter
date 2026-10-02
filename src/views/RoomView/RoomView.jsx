@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowLeft, Plus, Share2 } from 'lucide-react'
+import { ArrowLeft, Share2, Loader2 } from 'lucide-react'
 import { useRoom } from '@/hooks/useRoom'
 import { Sheet, Dialog, Toast } from '@/components'
 import { touchRoom } from '@/utils/roomStorage'
@@ -7,7 +7,7 @@ import styles from '@/views/RoomView/index.module.less'
 
 function fmtScore(v) {
   if (v == null) return ''
-  return String(v)
+  return v > 0 ? `+${v}` : String(v)
 }
 
 export default function RoomView({ roomId, onBack, onFinish }) {
@@ -23,31 +23,46 @@ export default function RoomView({ roomId, onBack, onFinish }) {
     addPlayer,
     saveRound,
     updateScore,
-    deleteRound,
     finishRoom,
   } = useRoom(roomId)
 
   const [roundSheet, setRoundSheet] = useState(false)
   const [roundInputs, setRoundInputs] = useState({})
-  const [editOpen, setEditOpen] = useState(false)
+  // 整轮编辑弹层
+  const [editRoundSheet, setEditRoundSheet] = useState(false)
   const [editRoundId, setEditRoundId] = useState(null)
-  const [editPlayerId, setEditPlayerId] = useState(null)
-  const [editValue, setEditValue] = useState('')
-  const [editNeg, setEditNeg] = useState(false)
-  const [deleteOpen, setDeleteOpen] = useState(false)
-  const [deleteRoundId, setDeleteRoundId] = useState(null)
+  const [editRoundNumber, setEditRoundNumber] = useState(null)
+  const [editInputs, setEditInputs] = useState({})
   const [endOpen, setEndOpen] = useState(false)
   const [addPlayerSheet, setAddPlayerSheet] = useState(false)
   const [newPlayerName, setNewPlayerName] = useState('')
-  const [longPressTimer, setLongPressTimer] = useState(null)
+  // 异步操作 loading 态（防连点）
+  const [savingRound, setSavingRound] = useState(false)
+  const [addingPlayer, setAddingPlayer] = useState(false)
+  const [savingEditRound, setSavingEditRound] = useState(false)
+  const [ending, setEnding] = useState(false)
+  // 同步生效的 busy 守卫（state 依赖渲染时机，存在竞态窗口）
+  const busyRef = useRef(new Set())
+  const isBusy = (k) => busyRef.current.has(k)
+  const markBusy = (k) => busyRef.current.add(k)
+  const clearBusy = (k) => busyRef.current.delete(k)
 
   const isFinished = room?.status === 'finished'
 
   useEffect(() => {
     if (room) {
-      touchRoom({ id: room.id, name: room.name, status: room.status, playerCount: players.length })
+      touchRoom({
+        id: room.id,
+        name: room.name,
+        status: room.status,
+        playerCount: players.length,
+        playersSnapshot: players.map((p) => ({ name: p.name, total: totals[p.id] ?? 0 })),
+        roundCount: rows.length,
+        createdAt: room.created_at,
+        endedAt: room.ended_at,
+      })
     }
-  }, [room, players.length])
+  }, [room, players, rows, totals])
 
   useEffect(() => {
     if (isFinished) {
@@ -59,6 +74,8 @@ export default function RoomView({ roomId, onBack, onFinish }) {
     const init = {}
     players.forEach((p) => (init[p.id] = ''))
     setRoundInputs(init)
+    clearBusy('round')
+    setSavingRound(false)
     setRoundSheet(true)
   }
 
@@ -75,6 +92,7 @@ export default function RoomView({ roomId, onBack, onFinish }) {
   }
 
   const handleSaveRound = async () => {
+    if (isBusy('round')) return
     const map = {}
     players.forEach((p) => {
       const v = roundInputs[p.id]?.trim()
@@ -83,54 +101,101 @@ export default function RoomView({ roomId, onBack, onFinish }) {
         if (!Number.isNaN(n)) map[p.id] = n
       }
     })
-    const res = await saveRound(map)
-    if (res.ok) setRoundSheet(false)
-  }
-
-  const openEdit = (roundId, playerId, current) => {
-    if (isFinished) return
-    const s = current != null ? String(Math.abs(current)) : ''
-    setEditRoundId(roundId)
-    setEditPlayerId(playerId)
-    setEditValue(s)
-    setEditNeg(current != null && current < 0)
-    setEditOpen(true)
-  }
-
-  const confirmEdit = async () => {
-    const v = editValue.trim()
-    let score = null
-    if (v !== '') {
-      const n = parseInt(v, 10)
-      if (!Number.isNaN(n)) score = editNeg ? -n : n
+    if (Object.keys(map).length === 0) {
+      showToast('请至少输入一位玩家的分数')
+      return
     }
-    const res = await updateScore(editRoundId, editPlayerId, score)
-    if (res.ok) setEditOpen(false)
+    markBusy('round')
+    setSavingRound(true)
+    const res = await saveRound(map)
+    if (res.ok) {
+      // 成功后保持 disabled 直到弹层完全关闭，下次打开时复位；同时清空输入防穿透重开后的重复提交
+      setRoundSheet(false)
+      const init = {}
+      players.forEach((p) => (init[p.id] = ''))
+      setRoundInputs(init)
+    } else {
+      clearBusy('round')
+      setSavingRound(false)
+    }
   }
 
-  const startLongPress = (roundId) => {
+  // 打开整轮编辑弹层：预填该轮所有玩家分数（含正负号）
+  const openRoundEdit = (row) => {
     if (isFinished) return
-    const t = setTimeout(() => {
-      setDeleteRoundId(roundId)
-      setDeleteOpen(true)
-    }, 600)
-    setLongPressTimer(t)
-  }
-  const cancelLongPress = () => {
-    if (longPressTimer) clearTimeout(longPressTimer)
-    setLongPressTimer(null)
+    const init = {}
+    players.forEach((p) => {
+      const s = row.scores[p.id]
+      init[p.id] = s == null ? '' : String(s)
+    })
+    setEditRoundId(row.roundId)
+    setEditRoundNumber(row.roundNumber)
+    setEditInputs(init)
+    clearBusy('editRound')
+    setSavingEditRound(false)
+    setEditRoundSheet(true)
   }
 
-  const confirmDelete = async () => {
-    const res = await deleteRound(deleteRoundId)
-    if (res.ok) setDeleteOpen(false)
+  const setEditInput = (pid, v) => {
+    const clean = v.replace(/(?!^-)[^0-9]/g, '')
+    setEditInputs((prev) => ({ ...prev, [pid]: clean }))
+  }
+
+  const toggleEditSign = (pid) => {
+    setEditInputs((prev) => {
+      const cur = prev[pid] ?? ''
+      return { ...prev, [pid]: cur.startsWith('-') ? cur.slice(1) : `-${cur}` }
+    })
+  }
+
+  // 保存整轮修改：只提交有变化的玩家；留空 = 清除该玩家本轮分数
+  const handleSaveRoundEdit = async () => {
+    if (isBusy('editRound')) return
+    const row = rows.find((r) => r.roundId === editRoundId)
+    if (!row) {
+      setEditRoundSheet(false)
+      return
+    }
+    const updates = []
+    players.forEach((p) => {
+      const v = (editInputs[p.id] ?? '').trim()
+      let score = null
+      if (v !== '') {
+        const n = parseInt(v, 10)
+        if (!Number.isNaN(n)) score = n
+      }
+      if (score !== (row.scores[p.id] ?? null)) updates.push({ playerId: p.id, score })
+    })
+    if (updates.length === 0) {
+      setEditRoundSheet(false)
+      return
+    }
+    markBusy('editRound')
+    setSavingEditRound(true)
+    const results = await Promise.all(
+      updates.map((u) => updateScore(editRoundId, u.playerId, u.score)),
+    )
+    if (results.every((r) => r.ok)) {
+      // 成功后保持 disabled 直到弹层完全关闭，下次打开时复位
+      setEditRoundSheet(false)
+    } else {
+      clearBusy('editRound')
+      setSavingEditRound(false)
+      showToast('保存失败，请稍后再试')
+    }
   }
 
   const handleEnd = async () => {
+    if (isBusy('end')) return
+    markBusy('end')
+    setEnding(true)
     const res = await finishRoom()
     if (res.ok) {
       setEndOpen(false)
       onFinish(roomId)
+    } else {
+      clearBusy('end')
+      setEnding(false)
     }
   }
 
@@ -150,26 +215,61 @@ export default function RoomView({ roomId, onBack, onFinish }) {
     }
   }
 
+  const openAddPlayerSheet = () => {
+    setNewPlayerName('')
+    clearBusy('add')
+    setAddingPlayer(false)
+    setAddPlayerSheet(true)
+  }
+
   const handleAddPlayer = async () => {
+    if (isBusy('add')) return
     const n = newPlayerName.trim()
     if (!n) return
     if (players.some((p) => p.name === n)) {
       showToast('玩家名已存在')
       return
     }
+    markBusy('add')
+    setAddingPlayer(true)
     const res = await addPlayer(n)
     if (res.ok) {
       setAddPlayerSheet(false)
       setNewPlayerName('')
+    } else {
+      clearBusy('add')
+      setAddingPlayer(false)
     }
   }
 
-  const cellMinW = useMemo(() => {
-    const base = players.length <= 4 ? 90 : players.length <= 6 ? 76 : 64
-    return base
-  }, [players.length])
+  // 按玩家名实测列宽：主表格与总计行共用同一组宽度，保证逐列对齐
+  const colWidths = useMemo(() => {
+    const ctx = document.createElement('canvas').getContext('2d')
+    ctx.font = '600 12px "Hanken Grotesk", "PingFang SC", "Microsoft YaHei", sans-serif'
+    return players.map((p) => Math.max(64, Math.ceil(ctx.measureText(p.name).width) + 20))
+  }, [players])
 
-  const tableWidth = `max(100%, ${40 + players.length * cellMinW}px)`
+  const tableWidth = `max(100%, ${colWidths.reduce((sum, w) => sum + w, 56)}px)`
+
+  // 每轮最高分的玩家集合（用于加粗标记）
+  const roundWinners = useMemo(() => {
+    const map = {}
+    rows.forEach((r) => {
+      let max = -Infinity
+      players.forEach((p) => {
+        const s = r.scores[p.id]
+        if (s != null && s > max) max = s
+      })
+      const winners = new Set()
+      if (max > -Infinity) {
+        players.forEach((p) => {
+          if (r.scores[p.id] === max) winners.add(p.id)
+        })
+      }
+      map[r.roundId] = winners
+    })
+    return map
+  }, [rows, players])
 
   // 主表格与固定总分行横向滚动同步
   const tableRef = useRef(null)
@@ -207,9 +307,11 @@ export default function RoomView({ roomId, onBack, onFinish }) {
 
       <header className={styles.header}>
         <button className={styles.iconBtn} onClick={onBack} aria-label="返回">
-          <ArrowLeft size={22} strokeWidth={1.8} />
+          <ArrowLeft size={22} strokeWidth={2.2} />
         </button>
-        <div className={styles.headerTitle}>{room.name}</div>
+        <div className={styles.headerCenter}>
+          <div className={styles.headerTitle}>{room.name}</div>
+        </div>
         <button className={styles.iconBtn} onClick={handleShare} aria-label="分享">
           <Share2 size={20} strokeWidth={1.8} />
         </button>
@@ -219,7 +321,7 @@ export default function RoomView({ roomId, onBack, onFinish }) {
         {rows.length === 0 ? (
           <div className={styles.empty}>
             <p className={styles.emptyTitle}>还没有轮次</p>
-            <p className={styles.emptySub}>点击「+新一轮」开始记分</p>
+            <p className={styles.emptySub}>点击下方按钮录入第一轮</p>
           </div>
         ) : (
           <>
@@ -231,12 +333,9 @@ export default function RoomView({ roomId, onBack, onFinish }) {
               <table className={styles.table} style={{ minWidth: tableWidth }}>
                 <thead>
                   <tr>
-                    <th
-                      className={`${styles.th} ${styles.stickyCol}`}
-                      style={{ width: 40, minWidth: 40 }}
-                    />
-                    {players.map((p) => (
-                      <th key={p.id} className={styles.th} style={{ minWidth: cellMinW }}>
+                    <th className={`${styles.th} ${styles.stickyCol} ${styles.roundTh}`}>轮次</th>
+                    {players.map((p, i) => (
+                      <th key={p.id} className={styles.th} style={{ width: colWidths[i] }}>
                         {p.name}
                       </th>
                     ))}
@@ -247,25 +346,22 @@ export default function RoomView({ roomId, onBack, onFinish }) {
                     <tr key={row.roundId}>
                       <td
                         className={`${styles.td} ${styles.stickyCol} ${styles.roundNum}`}
-                        style={{ width: 40, minWidth: 40 }}
-                        onTouchStart={() => startLongPress(row.roundId)}
-                        onTouchEnd={cancelLongPress}
-                        onMouseDown={() => startLongPress(row.roundId)}
-                        onMouseUp={cancelLongPress}
-                        onMouseLeave={cancelLongPress}
+                        onClick={() => openRoundEdit(row)}
                       >
-                        {row.roundNumber}
+                        第{row.roundNumber}轮
                       </td>
-                      {players.map((p) => {
+                      {players.map((p, i) => {
                         const s = row.scores[p.id]
+                        const isWinner = s != null && roundWinners[row.roundId]?.has(p.id)
                         return (
                           <td
                             key={p.id}
-                            className={`${styles.td} ${styles.scoreCell} ${s == null ? styles.emptyCell : ''}`}
-                            style={{ minWidth: cellMinW }}
-                            onClick={() => openEdit(row.roundId, p.id, s)}
+                            className={`${styles.td} ${styles.scoreCell}`}
+                            style={{ width: colWidths[i] }}
                           >
-                            <span className={`num ${s != null && s < 0 ? styles.scoreNeg : ''}`}>
+                            <span
+                              className={`${s != null && s < 0 ? styles.scoreNeg : ''} ${isWinner ? styles.scoreWin : ''}`}
+                            >
                               {fmtScore(s)}
                             </span>
                           </td>
@@ -281,20 +377,25 @@ export default function RoomView({ roomId, onBack, onFinish }) {
               className={styles.totalBar}
               onScroll={() => syncScroll(totalRef, tableRef)}
             >
-              <div className={styles.totalInner} style={{ minWidth: tableWidth }}>
-                <div className={styles.totalItem} style={{ minWidth: 40 }}>
-                  总
-                </div>
-                {players.map((p) => (
-                  <div
-                    key={p.id}
-                    className={`${styles.totalItem} ${styles.totalScore} num`}
-                    style={{ minWidth: cellMinW }}
-                  >
-                    {totals[p.id] ?? 0}
-                  </div>
-                ))}
-              </div>
+              <table className={styles.totalTable} style={{ minWidth: tableWidth }}>
+                <tbody>
+                  <tr>
+                    <td className={`${styles.totalCell} ${styles.totalSticky}`}>总计</td>
+                    {players.map((p, i) => {
+                      const t = totals[p.id] ?? 0
+                      return (
+                        <td
+                          key={p.id}
+                          className={`${styles.totalCell} ${styles.totalScore} ${t < 0 ? styles.totalNeg : ''}`}
+                          style={{ width: colWidths[i] }}
+                        >
+                          {fmtScore(t)}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </>
         )}
@@ -302,16 +403,23 @@ export default function RoomView({ roomId, onBack, onFinish }) {
 
       {!isFinished && (
         <div className={styles.bottomBar}>
-          <button className={styles.roundBtn} onClick={openRoundSheet}>
-            <Plus size={18} strokeWidth={2.2} />
-            <span>新一轮</span>
-          </button>
-          <button className={styles.playerBtn} onClick={() => setAddPlayerSheet(true)}>
-            <Plus size={16} strokeWidth={2.2} />
-            <span>玩家</span>
-          </button>
-          <button className={styles.endBtn} onClick={() => setEndOpen(true)}>
-            <span>结束</span>
+          <div className={styles.bottomGrid}>
+            <button className={styles.roundBtn} onClick={openRoundSheet}>
+              录入下一轮
+            </button>
+            <button className={styles.playerBtn} onClick={openAddPlayerSheet}>
+              添加玩家
+            </button>
+          </div>
+          <button
+            className={styles.endBtn}
+            onClick={() => {
+              clearBusy('end')
+              setEnding(false)
+              setEndOpen(true)
+            }}
+          >
+            结束对局并结算
           </button>
         </div>
       )}
@@ -338,6 +446,7 @@ export default function RoomView({ roomId, onBack, onFinish }) {
                   className={styles.roundInput}
                   type="text"
                   inputMode="numeric"
+                  placeholder="输入得分"
                   value={(roundInputs[p.id] ?? '').replace(/^-/, '')}
                   onChange={(e) =>
                     setRoundInput(
@@ -349,63 +458,68 @@ export default function RoomView({ roomId, onBack, onFinish }) {
               </div>
             </div>
           ))}
-          <button className={styles.primaryBtn} onClick={handleSaveRound}>
-            保存本轮
+          <button className={styles.primaryBtn} onClick={handleSaveRound} disabled={savingRound}>
+            {savingRound && <Loader2 size={18} className={styles.spin} />}
+            {savingRound ? '保存中…' : '保存本轮'}
           </button>
         </div>
       </Sheet>
 
-      {/* 修改分数 Dialog */}
-      <Dialog
-        open={editOpen}
-        onClose={() => setEditOpen(false)}
-        title="修改分数"
-        content={
-          <div className={styles.editBody}>
-            <div className={styles.editRow}>
-              <button
-                className={`${styles.signToggle} ${editNeg ? styles.neg : ''}`}
-                onClick={() => setEditNeg((v) => !v)}
-              >
-                {editNeg ? '−' : '+'}
-              </button>
-              <input
-                className={styles.editInput}
-                type="text"
-                inputMode="numeric"
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value.replace(/[^0-9]/g, ''))}
-                placeholder="留空表示清除"
-                autoFocus
-              />
+      {/* 编辑整轮 Sheet */}
+      <Sheet
+        open={editRoundSheet}
+        onClose={() => setEditRoundSheet(false)}
+        title={`第 ${editRoundNumber} 轮`}
+      >
+        <div className={styles.roundBody}>
+          {players.map((p) => (
+            <div key={p.id} className={styles.roundRow}>
+              <span className={styles.roundName}>{p.name}</span>
+              <div className={styles.roundInputWrap}>
+                <button
+                  className={`${styles.signToggle} ${(editInputs[p.id] ?? '').startsWith('-') ? styles.neg : ''}`}
+                  onClick={() => toggleEditSign(p.id)}
+                  aria-label="切换正负号"
+                >
+                  {(editInputs[p.id] ?? '').startsWith('-') ? '−' : '+'}
+                </button>
+                <input
+                  className={styles.roundInput}
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="无分数"
+                  value={(editInputs[p.id] ?? '').replace(/^-/, '')}
+                  onChange={(e) =>
+                    setEditInput(
+                      p.id,
+                      `${(editInputs[p.id] ?? '').startsWith('-') ? '-' : ''}${e.target.value}`,
+                    )
+                  }
+                />
+              </div>
             </div>
-            <p className={styles.editHint}>切换 +/− 改变正负，留空清除分数</p>
-          </div>
-        }
-        onConfirm={confirmEdit}
-        confirmText="确认"
-      />
-
-      {/* 删除轮次 */}
-      <Dialog
-        open={deleteOpen}
-        onClose={() => setDeleteOpen(false)}
-        title="删除轮次"
-        content="确定删除该轮次的全部记录？此操作不可撤销。"
-        onConfirm={confirmDelete}
-        confirmText="删除"
-        danger
-      />
+          ))}
+          <button
+            className={styles.primaryBtn}
+            onClick={handleSaveRoundEdit}
+            disabled={savingEditRound}
+          >
+            {savingEditRound && <Loader2 size={18} className={styles.spin} />}
+            {savingEditRound ? '保存中…' : '保存修改'}
+          </button>
+          <p className={styles.sheetNote}>留空的玩家将清除本轮分数</p>
+        </div>
+      </Sheet>
 
       {/* 结束游戏 */}
       <Dialog
         open={endOpen}
         onClose={() => setEndOpen(false)}
         title="结束游戏"
-        content="结束后房间将锁定，所有人将跳转到结算页。确定结束？"
+        content="结束后本房间将立即锁定，当前计分结果将完成归档，所有玩家将同步跳转至最终结算清单。确定结束此局？"
         onConfirm={handleEnd}
-        confirmText="结束游戏"
-        danger
+        confirmText="确认结束"
+        confirmLoading={ending}
       />
 
       {/* 添加玩家 Sheet */}
@@ -416,11 +530,20 @@ export default function RoomView({ roomId, onBack, onFinish }) {
             value={newPlayerName}
             onChange={(e) => setNewPlayerName(e.target.value)}
             placeholder="玩家姓名"
-            maxLength={12}
+            maxLength={8}
           />
-          <button className={styles.primaryBtn} onClick={handleAddPlayer}>
-            确认添加
+          <div className={styles.inputMeta}>
+            <span>支持2-8个汉字或昵称</span>
+            <span>{newPlayerName.length}/8</span>
+          </div>
+          <button className={styles.primaryBtn} onClick={handleAddPlayer} disabled={addingPlayer}>
+            {addingPlayer && <Loader2 size={18} className={styles.spin} />}
+            {addingPlayer ? '添加中…' : '确认添加'}
           </button>
+          <button className={styles.cancelBtn} onClick={() => setAddPlayerSheet(false)}>
+            取消
+          </button>
+          <p className={styles.sheetNote}>新加入玩家将自下一轮起参与计分</p>
         </div>
       </Sheet>
 

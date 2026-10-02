@@ -1,14 +1,17 @@
+/* 分享战报页 · Monochrome Swiss Minimalist（第四页 mockup 对齐） */
 .page {
   min-height: 100%;
-  // 同族青色柔和渐变（浅青 → 暖纸），与全局暖底衔接
-  background: linear-gradient(
-    180deg,
-    var(--share-bg-top) 0%,
-    var(--share-bg-mid) 42%,
-    var(--share-bg-bottom) 100%
-  );
+  background: #f9f9fa;
   display: flex;
   flex-direction: column;
+  color: #1a1c1d;
+  font-family:
+    'Hanken Grotesk',
+    -apple-system,
+    'PingFang SC',
+    'Hiragino Sans GB',
+    'Microsoft YaHei',
+    sans-serif;
 }
 
 .loading {
@@ -16,372 +19,197 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-2);
-}
-
-.topBar {
-  height: var(--header-h);
-  padding: 0 12px;
-  padding-top: env(safe-area-inset-top);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-
-.iconBtn {
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--teal-ink);
-  border-radius: var(--radius-s);
+  color: #5d5e66;
+  font-size: 14px;
 }
 
 .scroll {
   flex: 1;
-  padding: 0 20px calc(20px + env(safe-area-inset-bottom));
+  padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
   overflow-y: auto;
 }
 
-/* ===== 标题区 ===== */
-.hero {
-  padding: 8px 4px 4px;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.heroTitle {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  color: var(--teal-ink);
-}
-
-.heroTitle::after {
-  content: '';
-  display: block;
-  width: 28px;
-  height: 2px;
-  margin: 10px auto 0;
-  background: var(--gold);
-  border-radius: 2px;
-}
-
-.heroSub {
-  margin: 10px 0 0;
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: rgb(21 88 80 / 60%);
-}
-
-/* ===== 领奖台：同族青色三阶 ===== */
-.podium {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 18px;
-  padding: 20px 8px 0;
-  margin-bottom: 20px;
-}
-
-.podiumItem {
-  flex: 1;
-  max-width: 110px;
+/* ===== 战报海报 ===== */
+.poster {
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  gap: 24px;
 }
 
-.podiumName {
-  font-size: 14px;
+.divider {
+  height: 1px;
+  width: 100%;
+  background: #e2e2e3;
+}
+
+.posterHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.posterTitle {
+  margin: 0;
+  font-size: 22px;
   font-weight: 700;
-  color: var(--teal-ink);
-  max-width: 100%;
+  letter-spacing: -0.02em;
+  color: #000;
+}
+
+.posterMeta {
+  font-size: 12px;
+  color: #5d5e66;
+  white-space: nowrap;
+}
+
+/* ===== 头名 ===== */
+.winnerBlock {
+  background: #f3f3f4;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.winnerLeft {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.winnerTags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.winnerBadge {
+  background: #000;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 6px;
+  flex-shrink: 0;
+}
+
+.winnerSub {
+  font-size: 12px;
+  color: #5d5e66;
+}
+
+.winnerName {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #000;
+  padding-top: 6px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* 总分：主数字，衬线大字 */
-.podiumScore {
-  font-family: var(--font-serif);
-  font-size: 26px;
+.winnerScore {
+  font-size: 30px;
   font-weight: 700;
-  color: var(--teal-ink);
-  line-height: 1.2;
-  margin-top: 2px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #000;
+  margin-top: 4px;
+  flex-shrink: 0;
 }
 
-.first .podiumScore {
-  font-size: 32px;
-  color: var(--gold-deep);
-}
-
-/* 水上/水下：小标签 */
-.podiumDiff {
-  font-size: 11px;
-  font-weight: 600;
-  margin: 2px 0 8px;
-}
-
-.up {
-  color: var(--up);
-}
-
-.down {
-  color: var(--down);
-}
-
-.podiumAvatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
+/* ===== 全员终局席位 ===== */
+.seats {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 18px;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seatsLabel {
+  font-size: 13px;
   font-weight: 700;
-  border: 3px solid #fff;
-  box-shadow: 0 4px 12px rgb(21 88 80 / 20%);
-  margin-bottom: -14px; // 悬浮压在柱顶
-  position: relative;
-  z-index: 2;
+  letter-spacing: 0.06em;
+  color: #000;
+  padding: 0 4px;
 }
 
-.first .podiumAvatar {
-  width: 62px;
-  height: 62px;
-  font-size: 22px;
-  border-color: rgb(176 138 62 / 45%);
-}
-
-.crown {
-  color: var(--gold);
-  margin-bottom: 2px;
-}
-
-/* 圆柱体：顶部椭圆高光 + 竖向渐变柱身 */
-.podiumBase {
-  width: 100%;
-  border-radius: 999px 999px 12px 12px;
+.seatList {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 34px;
-  font-weight: 800;
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 -14px 24px rgb(21 88 80 / 10%);
+  flex-direction: column;
+  gap: 6px;
 }
 
-.podiumBase::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 22px;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 32%);
-}
-
-.first .podiumBase {
-  height: 128px;
-  background: linear-gradient(180deg, var(--teal-mid) 0%, var(--teal-deep) 100%);
-  color: #fff;
-}
-
-.second .podiumBase {
-  height: 96px;
-  background: linear-gradient(180deg, var(--teal-pale) 0%, var(--teal-mid) 100%);
-  color: rgb(21 88 80 / 85%);
-}
-
-.third .podiumBase {
-  height: 80px;
-  background: linear-gradient(180deg, #e3f1ee 0%, var(--teal-pale) 100%);
-  color: rgb(21 88 80 / 70%);
-}
-
-/* ===== 白色圆角卡片 ===== */
-.card {
-  background: #fff;
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-pop);
-  overflow: hidden;
-  margin-bottom: 16px;
-}
-
-.rankRow {
+.seatRow {
+  background: #f3f3f4;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border);
 }
 
-.rankRow:last-child {
-  border-bottom: none;
-}
-
-.rankLeft {
+.seatLeft {
   display: flex;
   align-items: center;
   gap: 12px;
   min-width: 0;
 }
 
-.rankNo {
-  width: 20px;
-  text-align: center;
-  font-family: var(--font-serif);
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-3);
-}
-
-.rankAvatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
+.seatNo {
+  width: 16px;
   flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #5d5e66;
 }
 
-.rankName {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-1);
+.seatName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.rankRight {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
+.seatScore {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000;
   flex-shrink: 0;
 }
 
-.rankScore {
-  font-family: var(--font-serif);
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text-1);
+.seatScoreNeg {
+  color: #5d5e66;
 }
 
-.rankDiff {
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* ===== 对局回顾 ===== */
-.roundCard {
-  background: #fff;
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-pop);
-  padding: 16px 18px;
-  margin-bottom: 16px;
-  position: relative;
-}
-
-.roundTitle {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  color: var(--text-3);
-}
-
-.roundWrap {
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.roundTable {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 14px;
-  min-width: 100%;
-}
-
-.roundTh {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: #fff;
-  padding: 8px 10px;
-  font-weight: 600;
-  color: var(--text-1);
-  border-bottom: 1px solid var(--border-strong);
-  white-space: nowrap;
-  text-align: center;
-}
-
-.roundTd {
-  padding: 8px 10px;
-  text-align: center;
-  color: var(--text-1);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.roundStickyCol {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-  background: #fff;
-  font-size: 12px;
-  color: var(--text-3);
-}
-
-.roundTh.roundStickyCol {
-  z-index: 4;
-}
-
-/* 底部蒙层 */
-.roundFade {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 52px;
-  background: linear-gradient(to bottom, transparent, #fff);
-  border-radius: 0 0 var(--radius-l) var(--radius-l);
+/* ===== 操作 ===== */
+.actions {
+  margin-top: 20px;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shareBtn {
+  width: 100%;
+  height: 52px;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  padding-bottom: 10px;
-  pointer-events: none;
-}
+  gap: 8px;
+  cursor: pointer;
 
-.roundFade span {
-  font-size: 12px;
-  color: var(--text-3);
-}
-
-/* ===== 底部提示 ===== */
-.footerHint {
-  text-align: center;
-  padding: 8px 0;
-  color: rgb(21 88 80 / 50%);
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-.footerHint p {
-  margin: 0;
+  &:active {
+    background: #262626;
+  }
 }

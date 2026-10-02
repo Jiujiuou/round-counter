@@ -1,56 +1,239 @@
-# 界面规范
+---
+name: Monochrome Swiss Minimalist
+colors:
+  surface: '#f9f9fa'
+  surface-dim: '#dadadb'
+  surface-bright: '#f9f9fa'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#f3f3f4'
+  surface-container: '#eeeeef'
+  surface-container-high: '#e8e8e9'
+  surface-container-highest: '#e2e2e3'
+  on-surface: '#1a1c1d'
+  on-surface-variant: '#444748'
+  inverse-surface: '#2f3132'
+  inverse-on-surface: '#f0f1f2'
+  outline: '#747878'
+  outline-variant: '#c4c7c7'
+  surface-tint: '#5f5e5e'
+  primary: '#000000'
+  on-primary: '#ffffff'
+  primary-container: '#1c1b1b'
+  on-primary-container: '#858383'
+  inverse-primary: '#c8c6c5'
+  secondary: '#5d5e66'
+  on-secondary: '#ffffff'
+  secondary-container: '#e3e1ec'
+  on-secondary-container: '#63646c'
+  tertiary: '#000000'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#1d1b1a'
+  on-tertiary-container: '#868381'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#e5e2e1'
+  primary-fixed-dim: '#c8c6c5'
+  on-primary-fixed: '#1c1b1b'
+  on-primary-fixed-variant: '#474646'
+  secondary-fixed: '#e3e1ec'
+  secondary-fixed-dim: '#c6c5cf'
+  on-secondary-fixed: '#1a1b22'
+  on-secondary-fixed-variant: '#46464e'
+  tertiary-fixed: '#e6e1df'
+  tertiary-fixed-dim: '#cac6c3'
+  on-tertiary-fixed: '#1d1b1a'
+  on-tertiary-fixed-variant: '#484645'
+  background: '#f9f9fa'
+  on-background: '#1a1c1d'
+  surface-variant: '#e2e2e3'
+typography:
+  display:
+    fontFamily: Hanken Grotesk
+    fontSize: 3.5rem
+    fontWeight: '600'
+    lineHeight: '1.1'
+    letterSpacing: -0.04em
+  display-mobile:
+    fontFamily: Hanken Grotesk
+    fontSize: 2.25rem
+    fontWeight: '600'
+    lineHeight: '1.15'
+    letterSpacing: -0.03em
+  headline-lg:
+    fontFamily: Hanken Grotesk
+    fontSize: 2.25rem
+    fontWeight: '500'
+    lineHeight: '1.2'
+    letterSpacing: -0.03em
+  headline-lg-mobile:
+    fontFamily: Hanken Grotesk
+    fontSize: 1.75rem
+    fontWeight: '500'
+    lineHeight: '1.25'
+    letterSpacing: -0.02em
+  headline-md:
+    fontFamily: Hanken Grotesk
+    fontSize: 1.5rem
+    fontWeight: '500'
+    lineHeight: '1.3'
+    letterSpacing: -0.02em
+  headline-sm:
+    fontFamily: Hanken Grotesk
+    fontSize: 1.125rem
+    fontWeight: '500'
+    lineHeight: '1.4'
+    letterSpacing: -0.01em
+  body-lg:
+    fontFamily: Hanken Grotesk
+    fontSize: 1rem
+    fontWeight: '400'
+    lineHeight: '1.6'
+    letterSpacing: -0.01em
+  body-md:
+    fontFamily: Hanken Grotesk
+    fontSize: 0.875rem
+    fontWeight: '400'
+    lineHeight: '1.5'
+    letterSpacing: '0'
+  body-sm:
+    fontFamily: Hanken Grotesk
+    fontSize: 0.75rem
+    fontWeight: '400'
+    lineHeight: '1.5'
+    letterSpacing: 0.01em
+  label-md:
+    fontFamily: Geist
+    fontSize: 0.8125rem
+    fontWeight: '500'
+    lineHeight: '1'
+    letterSpacing: 0.02em
+  label-sm:
+    fontFamily: Geist
+    fontSize: 0.6875rem
+    fontWeight: '500'
+    lineHeight: '1'
+    letterSpacing: 0.06em
+  code:
+    fontFamily: Geist
+    fontSize: 0.8125rem
+    fontWeight: '400'
+    lineHeight: '1.4'
+    letterSpacing: '0'
+spacing:
+  gutter: 1.5rem
+  gutter-mobile: 1rem
+  margin: 3rem
+  margin-mobile: 1.25rem
+  space-xs: 0.25rem
+  space-sm: 0.5rem
+  space-md: 1rem
+  space-lg: 1.5rem
+  space-xl: 2.5rem
+---
 
-## 定位
+## Brand & Style
 
-多人游戏计分板：移动端 Web 应用（竖屏单屏为主），暖纸编辑部风：
+This design system embraces an uncompromising, reductionist philosophy rooted in Swiss typography, modern architectural restraint, and International Typographic Style principles. Every element serves an explicit functional purpose: structural hierarchy replaces ornamental decoration, precise spatial rhythm replaces heavy containment, and typographical contrast takes precedence over chromatic variance.
 
-- **主 App（首页 / 房间计分页 / 结算页）**：米白暖纸底 `#F7F4EE` + 白色卡片 + 墨黑 `#1F1C18` 主按钮，暖灰文字层级
-- **分享页**：同底 + 深墨绿 `#1E4D3B` Hero（衬线标题 + 古铜金 `#B8933E` 分隔线）+ 金银铜阶梯领奖台
-- 标题/大数字用衬线 `--font-serif`，正文用系统黑体
+### Target Audience & Emotional Intent
 
-## 主布局
+- **Audience:** Discerning professionals, architects, designers, developers, and researchers requiring dense, high-clarity interfaces devoid of cognitive noise.
+- **Perception:** Surgical precision, quiet authority, clarity, and structural poise.
+- **Design Philosophy:** Utilitarian purism. Color is never decorative; contrast, scale, and hairline grid alignments provide all spatial cues.
 
-```text
-┌─────────────────────────┐
-│ Header 52px（房间名+操作）│ ← 房间页才有
-├─────────────────────────┤
-│                         │
-│        Content          │ ← flex:1，单屏不滚动
-│                         │
-├─────────────────────────┤
-│ 底部操作栏 64px + 安全区  │ ← 房间页才有
-└─────────────────────────┘
-```
+## Colors
 
-- 仅适配竖屏；横屏保持竖屏布局不变（内容居中，最大宽度 480px）
-- 页面整体单屏 Flex，不出现页面级滚动条；表格内部允许滚动
-- **例外**：结算落地页允许纵向滚动（内容大于一屏时）
-- 全局 `box-sizing: border-box`；隐藏所有滚动条
+The palette is strictly achromatic, composed of calculated stops across light values to establish depth and optical legibility without color intervention.
 
-## 移动端规范
+### Palette Architecture
 
-- 单位：px / rem，弃用桌面 vw 体系
-- 触摸目标 ≥ 44px；输入框字号 16px（防 iOS 自动缩放）
-- 适配 `env(safe-area-inset-top/bottom)`
-- 数字使用 `font-variant-numeric: tabular-nums`（`.num` 类）
-- 所有按压反馈：`opacity` 或轻微 `scale`，150–250ms ease
+- **Primary Base Surfaces:** `#ffffff` for canvas; `#fcfcfc` for layered sub-surfaces and structural groupings.
+- **Text & Key Accents:** `#111111` for high-priority headlines, body text, and active interactive elements; `#000000` reserved for inverted buttons or decisive focal points.
+- **Secondary & Meta Hierarchy:** `#71717a` for secondary descriptions, captions, and deactivated states; `#a1a1aa` for tertiary placeholders, breadcrumbs, and subtle labels.
+- **Borders & Partitions:** `#e4e4e7` for 1px hairline delimiters; `#f4f4f5` for soft structural fills and subtle interactive hover foundations.
 
-## 变量
+Color shifts are forbidden across system alerts or states; status is expressed through structural typography, weight shifts, and standardized icon markers.
 
-配色、尺寸、圆角、阴影统一维护在 [variables.less](src/styles/variables.less)，组件通过 `var(...)` 使用：
+## Typography
 
-| 类别   | 关键变量                                                                  |
-| ------ | ------------------------------------------------------------------------- |
-| 浅色底 | `--page-bg` / `--surface` / `--border`                                    |
-| 文字   | `--text-1/2/3`                                                            |
-| 语义   | `--primary`（黑）、`--danger`（红）、`--up`（水上绿）、`--down`（水下红） |
-| 点缀   | `--gold` / `--gold-soft` / `--silver` / `--bronze`                        |     |
-| 尺寸   | `--radius-s/m/l`、`--touch`、`--header-h`、`--bottombar-h`                |
+The typography system relies on **Hanken Grotesk** for its precise geometry, neutral voice, and balanced proportions, supported by **Geist** for technical metadata, tags, and small data labels.
 
-## 组件通则
+### Typographic Rules
 
-- 图标统一 lucide-react，stroke 1.8，禁用 emoji
-- 弹层（底部 Sheet）：遮罩 `--scrim`，上滑进入 250ms `cubic-bezier(0.32, 0.72, 0, 1)`，圆角 20px 20px 0 0
-- 二次确认：居中 Dialog，主按钮黑色，危险操作按钮 `--danger`
-- Toast：顶部居中浮条，2s 自动消失
-- 每屏仅一个主按钮（黑底白字），次操作降权（文字按钮/描边按钮）
+- Line height is strictly coupled to font size to avoid optical drift.
+- Display sizes utilize tighter tracking (`-0.03em` to `-0.04em`) to maintain a clean editorial presence.
+- Body copy adheres to comfortable reading widths (45–65 characters).
+- Never mix italic styles with standard body copy; emphasis is created solely through weight shifts (`400` regular to `500` or `600` semi-bold).
+
+## Layout & Spacing
+
+Layouts conform to a disciplined, column-based structural grid derived from traditional Swiss poster design.
+
+### Grid & Responsiveness
+
+- **Desktop (1024px+):** 12-column grid, `3rem` margins, `1.5rem` gutters. Content containers cap at `1280px` max-width.
+- **Tablet (640px - 1023px):** 8-column grid, `2rem` margins, `1.25rem` gutters.
+- **Mobile (<640px):** 4-column grid, `1.25rem` margins, `1rem` gutters.
+
+### Rhythm
+
+Components follow an 8pt base grid with a 4pt sub-increment (`space-xs`). Spacing tokens are reserved exclusively for exterior clearance and interior component padding. Spatial distribution favors generous, purposeful white space over framed containers to indicate relationship and separation.
+
+## Elevation & Depth
+
+This system operates without drop shadows, elevation blurs, or volumetric gradients. Surface depth is entirely flat, organized via hairline structural lines and tonal step-downs.
+
+### Elevation Principles
+
+- **Hairline Delimiters:** Separation between panels, headers, and rows is handled through solid `1px` borders using `#e4e4e7`.
+- **Tonal Layers:** Layered depths (such as sidebars, drawers, and modal backdrops) rely on pure color blocking: `#ffffff` canvas over `#fcfcfc` foundation panels, with active selections highlighted by `#f4f4f5`.
+- **Modals & Overlays:** Modals use an unblurred 20% opacity black shroud (`rgba(0, 0, 0, 0.2)`) and are encased in a solid `1px` `#111111` or `#e4e4e7` border on `#ffffff` surfaces.
+
+## Shapes
+
+The shape system is strictly sharp (`0px` corner radii). Every container, button, input field, chip, and popover maintains clean, precise 90-degree corners.
+
+- **Perimeter Geometry:** No softened vertices, chamfers, or circular capsules.
+- **Visual Rationale:** Sharp geometries anchor the interface to the underlying grid matrix, mirroring classical typographic and architectural layouts.
+
+## Components
+
+### Buttons
+
+- **Primary:** Solid `#111111` background, `#ffffff` text, sharp corners, 0px radius. Hover shifts to `#000000` with subtle inverse tracking.
+- **Secondary:** Transparent background, `1px` solid `#e4e4e7` border, `#111111` text. Hover shifts to `#f4f4f5` background with a `#111111` border.
+- **Text/Ghost:** Transparent background, `#111111` text with an underline offset of 4px. Hover deepens underline weight from 1px to 1.5px.
+
+### Inputs & Text Areas
+
+- Built with a transparent or `#ffffff` surface, framed by a `1px` solid `#e4e4e7` border.
+- Focus state instantly switches the border to `#111111` (0px outline ring).
+- Placeholder text uses `#a1a1aa`. Floating labels use `label-sm` in `#71717a`.
+
+### Cards & Panels
+
+- Cards use no drop shadows. Structure is defined by a `1px` solid `#e4e4e7` perimeter border over `#ffffff` or `#fcfcfc`.
+- Interactive cards shift border color to `#111111` on hover with zero vertical translation.
+
+### Chips & Tags
+
+- Rectangular containers with sharp edges (`0px` radius).
+- Background `#f4f4f5`, text `#111111`, font scale `label-sm`.
+- Active or filter states invert the chip: `#111111` background with `#ffffff` text.
+
+### Checkboxes & Radios
+
+- **Checkbox:** `14px x 14px` sharp square with a `1px` solid `#111111` border. Checked state fills solid `#111111` with an interior sharp white square or check glyph.
+- **Radio:** `14px x 14px` sharp square outer container with a concentric sharp interior `#111111` square on selection.
+
+### Lists & Dividers
+
+- Lists employ hairline dividers (`1px` solid `#e4e4e7`) running edge-to-edge.
+- Row hover triggers a solid `#f4f4f5` background fill across the entire row surface.
+
+### Status Indicators & Badges
+
+- No saturated colors (reds, greens, ambers).
+- Status is communicated via typographic tags (e.g., `[ACTIVE]`, `[OFFLINE]`) in `Geist`, or mono-weight iconography paired with descriptive text.

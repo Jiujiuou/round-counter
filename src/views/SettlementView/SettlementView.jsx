@@ -1,18 +1,18 @@
-﻿import { useMemo, useState } from 'react'
-import { ArrowLeft, Crown, Medal, RotateCcw } from 'lucide-react'
+﻿import { useEffect, useMemo, useState } from 'react'
+import { ArrowRight } from 'lucide-react'
 import { useRoom } from '@/hooks/useRoom'
 import { Toast } from '@/components'
 import { fmtAmount, fmtDiff, settle } from '@/utils/settlement'
+import { touchRoom } from '@/utils/roomStorage'
 import styles from '@/views/SettlementView/index.module.less'
 
-const rankMedal = [
-  { icon: Crown, cls: 'gold' },
-  { icon: Medal, cls: 'silver' },
-  { icon: Medal, cls: 'bronze' },
-]
+/** 展示一位小数（平均/最低/最高分） */
+function fmt1(v) {
+  return v.toFixed(1)
+}
 
-export default function SettlementView({ roomId, onBack, onRematch, onShare }) {
-  const { loading, room, players, rows, toast, showToast } = useRoom(roomId)
+export default function SettlementView({ roomId, onRematch, onShare }) {
+  const { loading, room, players, rows, toast } = useRoom(roomId)
   const [rematching, setRematching] = useState(false)
 
   const totalsArr = useMemo(
@@ -25,8 +25,29 @@ export default function SettlementView({ roomId, onBack, onRematch, onShare }) {
     [players, rows],
   )
 
-  const { rows: settledRows, transfers } = useMemo(() => settle(totalsArr), [totalsArr])
+  const { rows: settledRows, transfers, avg } = useMemo(() => settle(totalsArr), [totalsArr])
   const ranked = useMemo(() => [...settledRows].sort((a, b) => b.total - a.total), [settledRows])
+
+  const minTotal = ranked.length > 0 ? ranked[ranked.length - 1].total : 0
+  const maxTotal = ranked.length > 0 ? ranked[0].total : 0
+  // 基准线在最低~最高区间内的位置（百分比）
+  const avgPct = maxTotal > minTotal ? ((avg - minTotal) / (maxTotal - minTotal)) * 100 : 50
+
+  // 已结束房间直达本页（不经过房间页），在此同步本地列表快照
+  useEffect(() => {
+    if (room && players.length > 0) {
+      touchRoom({
+        id: room.id,
+        name: room.name,
+        status: room.status,
+        playerCount: players.length,
+        playersSnapshot: totalsArr.map((t) => ({ name: t.name, total: t.total })),
+        roundCount: rows.length,
+        createdAt: room.created_at,
+        endedAt: room.ended_at,
+      })
+    }
+  }, [room, players, rows, totalsArr])
 
   const handleRematch = async () => {
     setRematching(true)
@@ -35,15 +56,6 @@ export default function SettlementView({ roomId, onBack, onRematch, onShare }) {
       players.map((p) => p.name),
     )
     setRematching(false)
-  }
-
-  const handleCopyUrl = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href)
-      showToast('链接已复制')
-    } catch {
-      showToast('复制失败')
-    }
   }
 
   if (loading || !room) {
@@ -56,77 +68,101 @@ export default function SettlementView({ roomId, onBack, onRematch, onShare }) {
 
   return (
     <div className={styles.page}>
-      <header className={styles.topBar}>
-        <button className={styles.iconBtn} onClick={onBack} aria-label="返回">
-          <ArrowLeft size={22} strokeWidth={1.8} />
-        </button>
-        <div className={styles.headerTitle}>结算</div>
-        <button className={styles.iconBtn} onClick={handleCopyUrl} aria-label="复制链接">
-          <span className={styles.copyLabel}>复制链接</span>
-        </button>
-      </header>
-
       <div className={styles.scroll}>
-        {/* 最终排名 */}
+        {/* 人均分水岭 */}
+        <section className={styles.avgCard}>
+          <span className={styles.avgLabel}>全场平均基准分</span>
+          <div className={styles.avgRow}>
+            <span className={styles.avgValue}>{fmt1(avg)}</span>
+            <span className={styles.avgUnit}>分/人</span>
+          </div>
+          <div className={styles.scale}>
+            <div className={styles.scaleTrack}>
+              <div className={styles.scaleFill} style={{ width: `${avgPct}%` }} />
+            </div>
+            <div
+              className={styles.scaleMarker}
+              style={{ left: `clamp(28px, ${avgPct}%, calc(100% - 28px))` }}
+            >
+              <span className={styles.scaleTag}>基准 {fmt1(avg)}</span>
+              <span className={styles.scaleTick} />
+            </div>
+          </div>
+          <div className={styles.scaleRange}>
+            <span>最低 {fmt1(minTotal)}</span>
+            <span>最高 {fmt1(maxTotal)}</span>
+          </div>
+        </section>
+
+        {/* 计分与差值 */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>最终排名</h2>
-          <div className={styles.rankList}>
-            {ranked.map((r, idx) => {
-              const medal = rankMedal[idx]
-              const MedalIcon = medal?.icon
-              return (
-                <div key={r.playerId} className={styles.rankRow}>
-                  <div className={styles.rankLeft}>
-                    {MedalIcon ? (
-                      <MedalIcon size={20} strokeWidth={1.8} className={styles[medal.cls]} />
-                    ) : (
-                      <span className={styles.rankNo}>{idx + 1}</span>
-                    )}
-                    <span className={styles.rankName}>{r.name}</span>
-                  </div>
-                  <div className={styles.rankRight}>
-                    <span className={`${styles.rankScore} num`}>{fmtAmount(r.total)} 分</span>
+          <div className={styles.sectionHead}>
+            <span className={styles.sectionTitle}>计分与差值</span>
+            <span className={styles.sectionMeta}>按总分排序</span>
+          </div>
+          <div className={styles.playerList}>
+            {ranked.map((r, idx) => (
+              <div key={r.playerId} className={styles.playerCard}>
+                <div className={styles.playerLeft}>
+                  <span className={`${styles.rankNo} ${idx === 0 ? styles.rankNoFirst : ''}`}>
+                    {idx + 1}
+                  </span>
+                  <div className={styles.playerInfo}>
                     <span
-                      className={`${styles.rankDiff} num ${
-                        r.diff > 0 ? styles.up : r.diff < 0 ? styles.down : styles.flat
-                      }`}
+                      className={`${styles.playerName} ${idx === 0 ? styles.playerNameFirst : ''}`}
                     >
-                      {fmtDiff(r.diff)}
+                      {r.name}
                     </span>
+                    <span className={styles.playerTotal}>总计 {fmtAmount(r.total)} 分</span>
                   </div>
                 </div>
-              )
-            })}
+                <div className={styles.playerRight}>
+                  <span className={`${styles.diffValue} ${idx === 0 ? styles.diffFirst : ''}`}>
+                    {fmtDiff(r.diff)}
+                  </span>
+                  <span className={`${styles.diffLabel} ${idx === 0 ? styles.diffLabelFirst : ''}`}>
+                    {r.diff > 0 ? '高于平均' : r.diff < 0 ? '低于平均' : '持平'}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
         {/* 结算清单 */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>结算清单</h2>
+        <section className={styles.settleCard}>
+          <div className={styles.settleHead}>
+            <span className={styles.sectionTitle}>结算</span>
+            <span className={styles.countBadge}>共 {transfers.length} 笔</span>
+          </div>
           {transfers.length === 0 ? (
             <div className={styles.noDebt}>本局无欠款</div>
           ) : (
             <div className={styles.transferList}>
               {transfers.map((t, i) => (
                 <div key={i} className={styles.transferRow}>
-                  <span className={styles.from}>{t.from}</span>
-                  <span className={styles.transferArrow}>→</span>
-                  <span className={styles.to}>{t.to}</span>
-                  <span className={`${styles.amount} num`}>{fmtAmount(t.amount)} 分</span>
+                  <div className={styles.transferParties}>
+                    <span className={styles.party}>{t.from}</span>
+                    <ArrowRight size={16} strokeWidth={1.8} className={styles.transferArrow} />
+                    <span className={styles.party}>{t.to}</span>
+                  </div>
+                  <div className={styles.transferAmount}>
+                    <span className={styles.amountValue}>{fmtAmount(t.amount)}</span>
+                    <span className={styles.amountUnit}>分</span>
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </section>
 
-        {/* 操作区 */}
+        {/* 底部操作 */}
         <div className={styles.actions}>
           <button className={styles.primaryBtn} onClick={onShare}>
-            生成排行榜
+            生成对局战报
           </button>
-          <button className={styles.rematchBtn} onClick={handleRematch} disabled={rematching}>
-            <RotateCcw size={18} strokeWidth={1.8} />
-            <span>{rematching ? '创建中…' : '再来一局'}</span>
+          <button className={styles.secondaryBtn} onClick={handleRematch} disabled={rematching}>
+            {rematching ? '创建中…' : '开启新对局'}
           </button>
         </div>
       </div>

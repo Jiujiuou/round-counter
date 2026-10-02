@@ -28,11 +28,11 @@ export default function App() {
     setTimeout(() => setToast(null), 2200)
   }, [])
 
-  const enterRoom = useCallback((id) => {
-    if (getRoomParam() !== id) {
-      history.pushState(null, '', `?room=${id}`)
+  const enterRoom = useCallback((id, view) => {
+    if (getRoomParam() !== id || getViewParam() !== view) {
+      history.pushState(null, '', view === 'share' ? `?room=${id}&view=share` : `?room=${id}`)
     }
-    setView(null)
+    setView(view ?? null)
     setSettleMode('loading')
     setRoomId(id)
   }, [])
@@ -82,11 +82,6 @@ export default function App() {
     setView('share')
   }, [roomId])
 
-  const goSettle = useCallback(() => {
-    history.pushState(null, '', `?room=${roomId}`)
-    setView(null)
-  }, [roomId])
-
   const handleRematch = useCallback(
     async (oldName, playerNames) => {
       const res = await createRoom(`${oldName} · 新局`, playerNames)
@@ -116,16 +111,9 @@ export default function App() {
     )
   } else if (settleMode === 'yes') {
     if (view === 'share') {
-      content = <ShareView roomId={roomId} onBack={goSettle} />
+      content = <ShareView roomId={roomId} />
     } else {
-      content = (
-        <SettlementView
-          roomId={roomId}
-          onBack={goHome}
-          onRematch={handleRematch}
-          onShare={goShare}
-        />
-      )
+      content = <SettlementView roomId={roomId} onRematch={handleRematch} onShare={goShare} />
     }
   } else {
     content = <RoomView roomId={roomId} onBack={goHome} onFinish={handleFinish} />
